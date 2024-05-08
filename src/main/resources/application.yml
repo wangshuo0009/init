@@ -1,0 +1,62 @@
+server:
+  port: 9000
+
+spring:
+  application:
+    name: bjftView-protect
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/itanylife?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 12345678
+
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/**
+  typeAliasesPackage: com.jssgwl.data.entity
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  #    lazy-loading-enabled: true
+  #    aggressive-lazy-loading: false
+  global-config:
+    db-config:
+      logic-delete-value: 1 # 逻辑已删除值(默认为 1)
+      logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
+
+knife4j:
+  enable: true
+  documents:
+    -
+      group: 2.X版本
+      name: 接口签名
+      locations:
+  setting:
+    language: zh-CN
+    enable-swagger-models: true
+    enable-document-manage: true
+    swagger-model-name: 实体类列表
+    enable-version: false
+    enable-reload-cache-parameter: false
+    enable-after-script: true
+    enable-filter-multipart-api-method-type: POST
+    enable-filter-multipart-apis: false
+    enable-request-cache: true
+    enable-host: false
+    enable-host-text: 127.0.0.1:8000
+    enable-home-custom: false
+    home-custom-path:
+    enable-search: false
+    enable-footer: false
+    enable-footer-custom: true
+    footer-custom-content: Apache License 2.0 | Copyright  2019-[浙江八一菜刀股份有限公司](https://gitee.com/xiaoym/knife4j)
+    enable-dynamic-parameter: false
+    enable-debug: true
+    enable-open-api: false
+    enable-group: true
+
+  cors: false
+  production: false
+  basic:
+    enable: true
+    username: test
+    password: 12313
