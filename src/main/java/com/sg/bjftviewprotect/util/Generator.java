@@ -14,7 +14,8 @@ public class Generator {
 
         //FastAutoGenerator.create("jdbc:mysql://localhost:3306/itanylife?serverTimezone=UTC", "root", "12345678")
         //FastAutoGenerator.create("jdbc:postgresql://192.168.1.165:5432/document-management?currentSchema=public&useUnicode=true&characterEncoding=utf8&useSSL=true&autoReconnect=true&reWriteBatchedInserts=true", "postgres", "postgres")
-        FastAutoGenerator.create("jdbc:mysql://piscn.vicp.cc:52306/jn-laboratory-prod?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull&useSSL=false&allowMultiQueries=true", "root", "sgwl2015")
+        //FastAutoGenerator.create("jdbc:mysql://piscn.vicp.cc:52306/jn-laboratory-prod?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull&useSSL=false&allowMultiQueries=true", "root", "sgwl2015")
+        FastAutoGenerator.create("jdbc:mysql://127.0.0.1:3306/bjftview_protect?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai", "root", "12345678")
                 .globalConfig(builder -> {
                     builder.author("wangshuo") // 设置作者
                             .enableSwagger()//开启swagger
@@ -25,18 +26,18 @@ public class Generator {
                 })
                 .packageConfig(builder -> {
                     //builder.parent("com.jssgwl.data.messages.documentation") // 设置父包名
-                    builder.parent("com.sgvolt.new") // 设置父包名
+                    builder.parent("com.sg.bjftviewprotect") // 设置父包名
                             .entity("entity")
                             .service("service")
                             .serviceImpl("service.impl")
-                            .mapper("dao")
+                            .mapper("mapper")
                             .xml("mapper.xml")
                             .controller("controller")
-                            .pathInfo(Collections.singletonMap(OutputFile.xml, System.getProperty("user.dir")+"/src/main/resources/mapper/message")); // 设置mapperXml生成路径
+                            .pathInfo(Collections.singletonMap(OutputFile.xml, System.getProperty("user.dir")+"/src/main/resources/mapper")); // 设置mapperXml生成路径
                 })
                 .strategyConfig(builder -> {
-                    builder.addInclude("router_log") // 设置需要生成的表名
-                            .addTablePrefix("t_new_") // 设置过滤表前缀
+                    builder.addInclude("t_user_role,t_role_menu") // 设置需要生成的表名
+                            .addTablePrefix("t_") // 设置过滤表前缀
                             .controllerBuilder()
                             .enableRestStyle()//开启restful风格
                             .enableFileOverride()//覆盖旧文件

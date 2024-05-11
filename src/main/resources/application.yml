@@ -4,11 +4,9 @@ server:
 spring:
   application:
     name: bjftView-protect
-  datasource:
-    url: jdbc:mysql://127.0.0.1:3306/itanylife?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: 12345678
+  profiles:
+    include:
+      - dev
 
 
 mybatis-plus:
@@ -57,6 +55,6 @@ knife4j:
   cors: false
   production: false
   basic:
-    enable: true
+    enable: false
     username: test
     password: 12313
