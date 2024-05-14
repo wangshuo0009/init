@@ -44,7 +44,7 @@ public class LoginController {
         }
         String token = UUID.randomUUID().toString().replaceAll("-", "");
         TokenManager.setUserToken(request, account, token);
-        return Result.success(200, "登陆成功", null, token);
+        return Result.success(200, "登陆成功", account, token);
     }
 
 

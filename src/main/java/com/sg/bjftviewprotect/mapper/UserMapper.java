@@ -1,7 +1,9 @@
 package com.sg.bjftviewprotect.mapper;
 
-import com.sg.bjftviewprotect.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.sg.bjftviewprotect.entity.User;
+import com.sg.bjftviewprotect.request.UserRequest;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,5 +19,8 @@ import java.util.List;
  */
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
-    List<User> selectAllUser(@Param("id") String id, @Param("name") String name, @Param("roleId") String roleId);
+    Page<User> selectAllUser(@Param("page") Page<User> page, @Param("userRequest")UserRequest userRequest, @Param("userChildIds") List<String> userChildIds);
+
+    // 查询当前用户子账户
+    List<String> selectUserChildIds(@Param("userId") String userId);
 }

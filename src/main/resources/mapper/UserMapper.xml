@@ -1,27 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sg.bjftviewprotect.mapper.UserMapper">
-    <select id="selectAllUser" resultType="com.sg.bjftviewprotect.entity.User">
+
+    <resultMap id="userWithRolesResultMap" type="com.sg.bjftviewprotect.entity.User">
+        <!-- 其他属性映射... -->
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="account" property="account"/>
+        <result column="password" property="password"/>
+        <result column="is_enable" property="isEnable"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="remark" property="remark"/>
+        <result column="create_time" property="createTime"/>
+        <collection property="roles" javaType="java.util.List" column="id" fetchType="eager"
+                    select="com.sg.bjftviewprotect.mapper.UserRoleMapper.selectUserRole">
+        </collection>
+    </resultMap>
+
+    <sql id="userAllColumn">
+        user.id,
+            user.name,
+            user.account,
+            user.password,
+            user.is_enable,
+            user.is_delete,
+            user.remark,
+            user.create_time
+    </sql>
+
+    <select id="selectAllUser" resultMap="userWithRolesResultMap">
         SELECT
-            u.*,
-            GROUP_CONCAT(r.name) AS role_name
-        FROM t_user u
-            inner join t_user_role ur ON u.id = ur.user_id
-            inner join t_role r ON ur.role_id = r.id
+            <include refid="userAllColumn"/>
+        FROM t_user user
         <where>
-            <if test="id != null and id != '' and id.length > 0">
-                and u.id = #{id}
+            user.is_delete = 0
+            <if test="userRequest.id != null and userRequest.id != '' and userRequest.id.length > 0">
+                and user.id = #{userRequest.id}
             </if>
-            <if test="id != name and name != '' and name.length > 0">
-                and u.name like concat('%',#{name},'%')
+            <if test="userRequest.name != null and userRequest.name != '' and userRequest.name.length > 0">
+                and user.name like concat('%',#{userRequest.name},'%')
             </if>
-            <if test="roleId != null and roleId != '' and roleId.length > 0">
-                and exists(
-                select 1 from t_user_role ur where ur.role_id = #{roleId}
-                )
+            <if test="userChildIds != null and !userChildIds.isEmpty()">
+                and user.id in
+                <foreach collection="userChildIds" item="userId" open="(" close=")" separator=",">
+                    #{userId}
+                </foreach>
             </if>
         </where>
-        GROUP BY u.id;
+        order BY user.id
+    </select>
+
+
+
+    <select id="selectUserChildIds" resultType="string">
+        WITH RECURSIVE Subordinates AS (
+        SELECT
+        id,
+        name,
+        parent_id
+        FROM
+        t_user
+        WHERE
+        id = #{userId}
+        UNION ALL
+        SELECT
+        t.id,
+        t.name,
+        t.parent_id
+        FROM
+        t_user t
+        INNER JOIN
+        Subordinates s ON t.parent_id = s.id
+        where t.parent_id != t.id
+        )
+        SELECT
+        distinct id
+        FROM
+        Subordinates;
     </select>
 
 

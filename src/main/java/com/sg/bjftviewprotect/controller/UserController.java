@@ -3,14 +3,17 @@ package com.sg.bjftviewprotect.controller;
 import cn.hutool.crypto.digest.MD5;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.sg.bjftviewprotect.annotation.LoginVerification;
 import com.sg.bjftviewprotect.common.Result;
+import com.sg.bjftviewprotect.constant.CommonConstant;
 import com.sg.bjftviewprotect.entity.User;
 import com.sg.bjftviewprotect.entity.UserRole;
 import com.sg.bjftviewprotect.request.UserRequest;
 import com.sg.bjftviewprotect.service.UserRoleService;
 import com.sg.bjftviewprotect.service.UserService;
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +31,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 @LoginVerification
+@Tag(name = "用户管理")
 public class UserController {
 
     @Autowired
@@ -36,20 +40,63 @@ public class UserController {
     @Autowired
     private UserRoleService userRoleService;
 
-    @GetMapping("/searchUser")
-    public Result<?> searchUser(@RequestParam(value = "id",required = false) String id,
-                                @RequestParam(value = "name",required = false) String name,
-                                @RequestParam(value = "roleId",required = false) String roleId) {
-        return userService.searchUser(id,name,roleId);
+    /**
+     * 查询用户信息
+     */
+    @Operation(summary = "查询用户信息")
+    @PostMapping("/searchUser")
+    public Result<?> searchUser(@RequestBody UserRequest userRequest,
+                                @RequestHeader("account") String account) {
+        return userService.searchUser(userRequest, account);
+    }
+    /**
+     * 新增用户信息
+     */
+    @Operation(summary = "新增用户信息")
+    @PostMapping("/saveUser")
+    public Result<?> saveUser(@RequestBody UserRequest userRequest,
+                              @RequestHeader("account") String account) {
+        // 参数验证
+        try {
+            parameterValidation(userRequest);
+        }catch (Exception e){
+            return Result.fail(e.getMessage());
+        }
+        User user = new User() {{
+            setName(userRequest.getName());
+            setPassword(StringUtils.isBlank(userRequest.getPassword()) ? null : MD5.create().digestHex(userRequest.getPassword()));
+            setAccount(userRequest.getAccount());
+            setRemark(userRequest.getRemark());
+            setIsEnable(userRequest.getIsEnable() == null ? 1 : userRequest.getIsEnable());
+            setIsDelete(CommonConstant.NOT_DELETE);
+            setParentId(account);
+        }};
+        userService.save(user);
+        if (!ObjectUtils.isEmpty(userRequest.getRoleId())){
+            List<String> roleIdList = userRequest.getRoleId();
+            List<UserRole> userRoles = new ArrayList<>();
+            for (String roleId : roleIdList){
+                userRoles.add(new UserRole(){{
+                    setUserId(user.getId());
+                    setRoleId(roleId);
+                }});
+            }
+            userRoleService.saveBatch(userRoles);
+        }
+        return Result.success("操作成功");
     }
 
-    @PutMapping("/updateUser")
+    /**
+     * 更新用户信息
+     */
+    @Operation(summary = "更新用户信息")
+    @PostMapping("/updateUser")
     public Result<?> updateUser(@RequestBody UserRequest userRequest) {
-        User one = userService.getOne(new LambdaQueryWrapper<User>() {{
-            eq(User::getAccount, userRequest.getAccount());
-        }},false);
-        if (ObjectUtils.isEmpty(one)) {
-            return Result.fail("帐号重复");
+        // 参数验证
+        try {
+            parameterValidation(userRequest);
+        }catch (Exception e){
+            return Result.fail(e.getMessage());
         }
         User user = new User() {{
             setId(userRequest.getId());
@@ -57,9 +104,9 @@ public class UserController {
             setPassword(StringUtils.isBlank(userRequest.getPassword()) ? null : MD5.create().digestHex(userRequest.getPassword()));
             setAccount(userRequest.getAccount());
             setRemark(userRequest.getRemark());
-            setStatus(userRequest.getStatus());
+            setIsEnable(userRequest.getIsEnable());
         }};
-        userService.saveOrUpdate(user);
+        userService.updateById(user);
         if (!ObjectUtils.isEmpty(userRequest.getRoleId())){
             List<String> roleIdList = userRequest.getRoleId();
             List<UserRole> userRoles = new ArrayList<>();
@@ -80,10 +127,30 @@ public class UserController {
 
 
 
+    /**
+     * 删除用户信息
+     */
+    @Operation(summary = "删除用户信息")
     @DeleteMapping("/deleteUser")
     public Result<?> deleteUser(@RequestParam(value = "id") String id) {
         userService.removeById(id);
         return Result.success("删除成功");
     }
+
+    /**
+     * 参数验证
+     */
+    public void parameterValidation(UserRequest request){
+        if (StringUtils.isBlank(request.getAccount())) {
+            throw new RuntimeException("帐号不能为空");
+        }
+        User one = userService.getOne(new LambdaQueryWrapper<User>() {{
+            eq(User::getAccount, request.getAccount());
+        }},false);
+        if (!ObjectUtils.isEmpty(one)) {
+            throw new RuntimeException("帐号重复");
+        }
+    }
+
 
 }

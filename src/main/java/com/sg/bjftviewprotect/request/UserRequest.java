@@ -28,7 +28,7 @@ public class UserRequest {
     private String password;
 
     @ApiModelProperty("状态1禁用0启用")
-    private Integer status;
+    private Integer isEnable;
 
     @ApiModelProperty("备注")
     @TableField("remark")
@@ -39,4 +39,7 @@ public class UserRequest {
 
     @ApiModelProperty("角色id")
     private List<String> roleId;
+
+    private Integer pageSize;
+    private Integer pageNum;
 }

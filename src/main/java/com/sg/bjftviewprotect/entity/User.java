@@ -13,6 +13,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -46,10 +47,14 @@ public class User implements Serializable {
     @TableField("password")
     private String password;
 
-    @ApiModelProperty("状态1禁用0启用")
-    @TableField("status")
+    @ApiModelProperty("是否启用1启用，0禁用")
+    @TableField("is_enable")
+    private Integer isEnable;
+
+    @ApiModelProperty("是否删除1删除，0未删除")
+    @TableField("is_delete")
     @TableLogic
-    private Integer status;
+    private Integer isDelete;
 
     @ApiModelProperty("备注")
     @TableField("remark")
@@ -61,7 +66,12 @@ public class User implements Serializable {
 
     @ApiModelProperty("角色")
     @TableField(exist = false)
-    private String roleName;
+    private List<Role> roles;
+
+    @ApiModelProperty("父id")
+    @TableField("parent_id")
+    private String parentId;
+
 
 
 }

@@ -3,6 +3,7 @@ package com.sg.bjftviewprotect.service;
 import com.sg.bjftviewprotect.common.Result;
 import com.sg.bjftviewprotect.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.sg.bjftviewprotect.request.UserRequest;
 
 /**
  * <p>
@@ -13,6 +14,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2024/05/09 13:31:56
  */
 public interface UserService extends IService<User> {
-    Result<?> searchUser(String id, String name, String roleId);
+    Result<?> searchUser(UserRequest userRequest, String roleIds);
 
 }

@@ -1,8 +1,13 @@
 package com.sg.bjftviewprotect.mapper;
 
-import com.sg.bjftviewprotect.entity.Role;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.sg.bjftviewprotect.entity.Role;
+import com.sg.bjftviewprotect.request.RoleRequest;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,5 +19,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface RoleMapper extends BaseMapper<Role> {
+    Page<Role> selectRole(@Param("page")Page<Role> page, @Param("roleRequest") RoleRequest roleRequest, @Param("roleChildIds") List<String> roleChildIds);
 
 }

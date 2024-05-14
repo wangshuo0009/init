@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -29,16 +30,14 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/electricNetworkOverview")
 @Tag(name = "电网概览")
-
 public class ElectricNetworkOverviewController {
     @Autowired
     private RegionalIntroductionService regionalIntroductionService;
 
-
     @Operation(summary = "查询接口",tags = "北京丰台区域简介")
     @GetMapping("/searchRegionalIntroduction")
     public Result<?> searchRegionalIntroduction(){
-        RegionalIntroduction one = regionalIntroductionService.getOne(new LambdaQueryWrapper<>());
+        List<RegionalIntroduction> one = regionalIntroductionService.list();
         return Result.success("查询成功",one);
     }
 
