@@ -97,7 +97,6 @@ public class MenuController {
             setIsDelete(CommonConstant.NOT_DELETE);
             setType(menuRequest.getType());
         }};
-        menuService.saveOrUpdate(menu);
         menuService.updateById(menu);
         return Result.success("更新成功");
     }

@@ -5,6 +5,7 @@ import com.sg.bjftviewprotect.mapper.RegionalIntroductionMapper;
 import com.sg.bjftviewprotect.service.RegionalIntroductionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * <p>
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
  * @since 2024/05/09 09:30:21
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class RegionalIntroductionServiceImpl extends ServiceImpl<RegionalIntroductionMapper, RegionalIntroduction> implements RegionalIntroductionService {
 
 }

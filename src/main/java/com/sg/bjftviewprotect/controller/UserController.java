@@ -16,6 +16,7 @@ import com.sg.bjftviewprotect.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -59,6 +60,7 @@ public class UserController {
      */
     @Operation(summary = "新增用户信息")
     @PostMapping("/saveUser")
+    @Transactional(rollbackFor = Exception.class)
     public Result<?> saveUser(@RequestBody UserRequest userRequest,
                               @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
         // 参数验证
@@ -96,6 +98,7 @@ public class UserController {
      */
     @Operation(summary = "更新用户信息")
     @PostMapping("/updateUser")
+    @Transactional(rollbackFor = Exception.class)
     public Result<?> updateUser(@RequestBody UserRequest userRequest) {
         // 参数验证
         try {

@@ -7,6 +7,7 @@ import com.sg.bjftviewprotect.mapper.UserRoleMapper;
 import com.sg.bjftviewprotect.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
  * @since 2024/05/11 11:45:34
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> implements UserRoleService {
 
     @Autowired

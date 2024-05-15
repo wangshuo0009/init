@@ -16,6 +16,7 @@ import com.sg.bjftviewprotect.service.UserRoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -73,6 +74,7 @@ public class RoleController {
 
     @Operation(summary = "新增角色信息")
     @PostMapping("/saveRole")
+    @Transactional(rollbackFor = Exception.class)
     public Result<?> saveRole(@RequestBody RoleRequest roleRequest,
                               @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
         try {
@@ -112,6 +114,7 @@ public class RoleController {
      */
     @Operation(summary = "更新角色信息")
     @PostMapping("/updateRole")
+    @Transactional(rollbackFor = Exception.class)
     public Result<?> updateRole(@RequestBody RoleRequest roleRequest) {
         try {
             parameterValidation(roleRequest);
