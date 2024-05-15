@@ -10,8 +10,8 @@ spring:
 
 
 mybatis-plus:
-  mapper-locations: classpath:mapper/**
-  typeAliasesPackage: com.jssgwl.data.entity
+  mapper-locations: classpath:mapper/**/**.xml
+  typeAliasesPackage: com.sg.bjftviewprotect.**.entity
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   #    lazy-loading-enabled: true
@@ -20,20 +20,14 @@ mybatis-plus:
     db-config:
       logic-delete-value: 1 # 逻辑已删除值(默认为 1)
       logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
-swagger:
-  docket-config:
-    dockets:
-      - id: education
-        groupName: 教育培训责任
-        basePackage: com.sg.bjftviewprotect.controller
 
 # springdoc-openapi项目配置
 springdoc:
   group-configs:
     - group: 1、后端管理接口
-      packages-to-scan: com.sg.bjftviewprotect.controller
-    - group: 2、前端API接口
-      packages-to-scan: com.sg.bjftviewprotect.controllerView
+      packages-to-scan: com.sg.bjftviewprotect.system.controller
+    - group: 2、三维API接口
+      packages-to-scan: com.sg.bjftviewprotect.view.controller
 
 knife4j:
   enable: true

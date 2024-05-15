@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sg.bjftviewprotect.system.mapper.MenuMapper">
+
+    <resultMap id="menuWithMenuModules" type="com.sg.bjftviewprotect.system.entity.Menu">
+        <collection property="menuModules" ofType="com.sg.bjftviewprotect.system.entity.MenuModules" javaType="java.util.List"
+                    column="id" select="com.sg.bjftviewprotect.system.mapper.MenuModulesMapper.selectByMenuId">
+        </collection>
+    </resultMap>
+
+    <sql id="menuAllColumn">
+            menu.id,
+            menu.name,
+            menu.code,
+            menu.is_enable,
+            menu.is_delete,
+            menu.remark,
+            menu.type,
+            menu.url
+    </sql>
+
+    <select id="selectMenu" resultType="com.sg.bjftviewprotect.system.entity.Menu">
+        select
+        DISTINCT
+            <include refid="menuAllColumn"/>
+            from t_menu menu
+            inner join t_role_menu rm on menu.id = rm.menu_id
+        <where>
+            menu.is_delete = 0
+            <if test="menuRequest.id != null and menuRequest.id != '' and menuRequest.id.length > 0">
+                and role.id = #{menuRequest.id}
+            </if>
+            <if test="menuRequest.name != null and menuRequest.name != '' and menuRequest.name.length > 0">
+                and role.name like concat('%',#{menuRequest.name},'%')
+            </if>
+            <if test="menuRequest.code != null and menuRequest.code != '' and menuRequest.code.length > 0">
+                and role.code like concat('%',#{menuRequest.code},'%')
+            </if>
+            <if test="roleChildIds != null and !roleChildIds.isEmpty()">
+                and rm.role_id in
+                <foreach collection="roleChildIds" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+
+
+
+    </select>
+    <select id="selectAllByType" resultMap="menuWithMenuModules">
+        select <include refid="menuAllColumn"/>
+            from t_menu menu
+        <where>
+            <if test="type != null and type == 1">
+                menu.type = #{type}
+            </if>
+        </where>
+        order by menu.sort_no
+    </select>
+</mapper>
