@@ -1,4 +1,4 @@
-package com.sg.bjftviewprotect.controller;
+package com.sg.bjftviewprotect.controllerView;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sg.bjftviewprotect.common.Result;

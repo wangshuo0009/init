@@ -8,6 +8,7 @@ import com.sg.bjftviewprotect.common.TokenManager;
 import com.sg.bjftviewprotect.entity.User;
 import com.sg.bjftviewprotect.request.UserLoginRequest;
 import com.sg.bjftviewprotect.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ import java.util.UUID;
  **/
 @RestController
 @RequestMapping("/login")
+@Tag(name = "系统登陆")
 public class LoginController {
 
 
