@@ -3,12 +3,6 @@
 <mapper namespace="com.sg.bjftviewprotect.mapper.RoleMapper">
 
     <resultMap id="roleWithMenuResultMap" type="com.sg.bjftviewprotect.entity.Role">
-        <id column="id" property="id"/>
-        <result column="name" property="name"/>
-        <result column="code" property="code"/>
-        <result column="is_enable" property="isEnable"/>
-        <result column="is_delete" property="isDelete"/>
-        <result column="remark" property="remark"/>
         <collection property="menus" javaType="java.util.List" column="id" fetchType="eager"
                     select="com.sg.bjftviewprotect.mapper.RoleMenuMapper.selectRoleMenu">
         </collection>

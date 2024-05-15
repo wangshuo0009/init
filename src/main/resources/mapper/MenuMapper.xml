@@ -2,7 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sg.bjftviewprotect.mapper.MenuMapper">
 
-
+    <resultMap id="menuWithMenuModules" type="com.sg.bjftviewprotect.entity.Menu">
+        <collection property="menuModules" ofType="com.sg.bjftviewprotect.entity.MenuModules" javaType="java.util.List"
+                    column="id" select="com.sg.bjftviewprotect.mapper.MenuModulesMapper.selectByMenuId">
+        </collection>
+    </resultMap>
 
     <sql id="menuAllColumn">
             menu.id,
@@ -42,5 +46,15 @@
 
 
 
+    </select>
+    <select id="selectAllByType" resultMap="menuWithMenuModules">
+        select <include refid="menuAllColumn"/>
+            from t_menu menu
+        <where>
+            <if test="type != null and type == 1">
+                menu.type = #{type}
+            </if>
+        </where>
+        order by menu.sort_no
     </select>
 </mapper>

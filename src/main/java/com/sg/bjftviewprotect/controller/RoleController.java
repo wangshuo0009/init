@@ -45,7 +45,7 @@ public class RoleController {
     @Autowired
     private UserRoleService userRoleService;
 
-    @Operation(summary = "查询所有角色信息")
+    @Operation(summary = "查询所有角色信息下拉框", tags = "用户管理")
     @GetMapping("/searchAllRole")
     public Result<?> searchAllRole() {
         List<Role> list = roleService.list();
@@ -53,7 +53,7 @@ public class RoleController {
     }
 
 
-    @Operation(summary = "新增用户角色下拉宽")
+    @Operation(summary = "新增用户角色下拉框", tags = "用户管理")
     @GetMapping("/searchRole")
     public Result<?> searchRole(@CookieValue(value = CommonConstant.X_USER_ID) String userId) {
         List<String> roleChildIds = userRoleService.searchRoleChildIds(userId);

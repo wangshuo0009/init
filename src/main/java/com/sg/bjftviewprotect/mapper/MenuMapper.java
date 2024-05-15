@@ -21,4 +21,6 @@ import java.util.List;
 public interface MenuMapper extends BaseMapper<Menu> {
 
     Page<Menu> selectMenu(@Param("page") Page<Menu> page, @Param("menuRequest") MenuRequest menuRequest, @Param("roleChildIds") List<String> roleChildIds);
+
+    List<Menu> selectAllByType(@Param("type") Integer type);
 }

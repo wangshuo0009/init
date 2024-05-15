@@ -18,4 +18,6 @@ import java.util.List;
 public interface MenuService extends IService<Menu> {
 
     Result<?> searchMenu(MenuRequest menuRequest, List<String> roleChildIds);
+
+    Result<?> searchAllByType(Integer type);
 }

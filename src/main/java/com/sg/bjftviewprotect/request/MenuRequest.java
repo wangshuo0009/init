@@ -1,5 +1,6 @@
 package com.sg.bjftviewprotect.request;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -32,7 +33,9 @@ public class MenuRequest {
     @Schema(description = "菜单路由")
     private String url;
 
-
+    @Schema(description = "排序")
+    @TableField("sort_no")
+    private Integer sortNo;
 
     private Integer pageSize;
     private Integer pageNum;

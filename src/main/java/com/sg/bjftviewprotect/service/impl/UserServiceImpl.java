@@ -1,6 +1,5 @@
 package com.sg.bjftviewprotect.service.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sg.bjftviewprotect.common.Result;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,10 +32,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         int pageNum = userRequest.getPageNum() == null ? 1 : userRequest.getPageNum();
         int pageSize = userRequest.getPageSize() == null ? 10 : userRequest.getPageSize();
         Page<User> page = new Page<>(pageNum,pageSize);
-        List<String> userChildIds = new ArrayList<>();
-        if (StringUtils.isBlank(userRequest.getId())){
-            userChildIds = userMapper.selectUserChildIds(userId);
-        }
+        List<String> userChildIds = userMapper.selectUserChildIds(userId);
         return Result.success("查询成功", userMapper.selectAllUser(page,userRequest,userChildIds));
     }
 }

@@ -19,7 +19,7 @@ public class Generator {
                 .globalConfig(builder -> {
                     builder.author("wangshuo") // 设置作者
                             //.enableSwagger()//开启swagger
-                            .enableSpringdoc()//开启swagger
+                            .enableSpringdoc()//开启SpringDoc
                             .disableOpenDir()//不跳转文件夹目录
                             .dateType(DateType.ONLY_DATE)//时间策略
                             .commentDate("yyyy/MM/dd HH:mm:ss")//注释日期
@@ -27,7 +27,7 @@ public class Generator {
                 })
                 .packageConfig(builder -> {
                     //builder.parent("com.jssgwl.data.messages.documentation") // 设置父包名
-                    builder.parent("com.sg.bjftviewprotect.test2") // 设置父包名
+                    builder.parent("com.sg.bjftviewprotect") // 设置父包名
                             .entity("entity")
                             .service("service")
                             .serviceImpl("service.impl")
@@ -37,11 +37,11 @@ public class Generator {
                             .pathInfo(Collections.singletonMap(OutputFile.xml, System.getProperty("user.dir")+"/src/main/resources/mapper")); // 设置mapperXml生成路径
                 })
                 .strategyConfig(builder -> {
-                    builder.addInclude("t_user_role,t_role_menu") // 设置需要生成的表名
+                    builder.addInclude("t_menu_modules") // 设置需要生成的表名
                             .addTablePrefix("t_") // 设置过滤表前缀
                             .controllerBuilder()
                             .enableRestStyle()//开启restful风格
-                            .enableFileOverride()//覆盖旧文件
+                            //.enableFileOverride()//覆盖旧文件
                             .entityBuilder()
                             .naming(NamingStrategy.underline_to_camel)// 数据库表映射到实体的命名策略,驼峰命名法
                             .columnNaming(NamingStrategy.underline_to_camel)//数据库表字段映射到实体的命名策略

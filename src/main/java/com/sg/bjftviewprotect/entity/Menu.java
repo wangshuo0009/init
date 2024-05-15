@@ -9,6 +9,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -61,4 +62,12 @@ public class Menu implements Serializable {
     @Schema(description = "菜单路由")
     @TableField("url")
     private String url;
+
+    @Schema(description = "排序")
+    @TableField("sort_no")
+    private Integer sortNo;
+
+    @Schema(description = "子模块")
+    @TableField(exist = false)
+    private List<MenuModules> menuModules;
 }

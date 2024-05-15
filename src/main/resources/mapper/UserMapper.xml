@@ -3,15 +3,6 @@
 <mapper namespace="com.sg.bjftviewprotect.mapper.UserMapper">
 
     <resultMap id="userWithRolesResultMap" type="com.sg.bjftviewprotect.entity.User">
-        <!-- 其他属性映射... -->
-        <id column="id" property="id"/>
-        <result column="name" property="name"/>
-        <result column="account" property="account"/>
-        <result column="password" property="password"/>
-        <result column="is_enable" property="isEnable"/>
-        <result column="is_delete" property="isDelete"/>
-        <result column="remark" property="remark"/>
-        <result column="create_time" property="createTime"/>
         <collection property="roles" javaType="java.util.List" column="id" fetchType="eager"
                     select="com.sg.bjftviewprotect.mapper.UserRoleMapper.selectUserRole">
         </collection>

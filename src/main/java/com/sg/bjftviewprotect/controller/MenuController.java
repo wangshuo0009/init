@@ -79,6 +79,7 @@ public class MenuController {
             setIsDelete(CommonConstant.NOT_DELETE);
             setType(menuRequest.getType());
             setCreateTime(LocalDateTime.now());
+            setSortNo(menuRequest.getSortNo());
         }};
         menuService.save(menu);
         return Result.success("新增成功");
@@ -100,6 +101,7 @@ public class MenuController {
             setIsEnable(CommonConstant.IS_ENABLE);
             setIsDelete(CommonConstant.NOT_DELETE);
             setType(menuRequest.getType());
+            setSortNo(menuRequest.getSortNo());
         }};
         menuService.updateById(menu);
         return Result.success("更新成功");

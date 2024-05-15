@@ -35,4 +35,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         Page<Menu> page = new Page<>(pageNum,pageSize);
         return Result.success("查询成功",menuMapper.selectMenu(page,menuRequest,roleChildIds));
     }
+
+    public Result<?> searchAllByType(Integer type) {
+        return Result.success("查询成功",menuMapper.selectAllByType(type));
+    }
+
+
 }

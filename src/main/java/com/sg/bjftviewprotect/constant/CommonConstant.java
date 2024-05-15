@@ -19,4 +19,8 @@ public class CommonConstant {
     public static final String X_USER_ID = "X-User-ID";
     public static final String X_USER_ACCOUNT = "X-User-Account";
 
+    public static final Integer THREE_DIMENSIONAL_TYPE_CODE = 1;
+    public static final Integer MANAGER_SYSTEM_TYPE_CODE = 2;
+
+
 }
