@@ -1,5 +1,8 @@
 package com.sg.bjftviewprotect.common;
 
+import com.sg.bjftviewprotect.constant.CommonConstant;
+
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
@@ -32,7 +35,23 @@ public class TokenManager {
         return null;
     }
 
-    public static boolean isTokenValid(String token) {
+    // 验证过期时间
+    public static boolean isTokenValid(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        String account = null;
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(CommonConstant.X_USER_ACCOUNT)) {
+                    account = cookie.getValue();
+                    break;
+                }
+            }
+        }
+        if (account == null) {
+            return false;
+        }
+        String token = getToken(request, account);
         Long expiryTime = tokenExpiryMap.get(token);
         return expiryTime != null && expiryTime >= System.currentTimeMillis();
     }
@@ -49,4 +68,5 @@ public class TokenManager {
             tokenExpiryMap.put(token, newExpiryTime);
         }
     }
+
 }

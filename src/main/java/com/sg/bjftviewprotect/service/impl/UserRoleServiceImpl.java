@@ -29,9 +29,11 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
     public List<String> searchRoleChildIds(String userId) {
         List<Role> roles = userRoleMapper.selectUserRole(userId);
         List<String> roleIds = new ArrayList<>();
-        for (Role role : roles) {
-            roleIds.add(role.getId());
+        if (!roles.isEmpty()) {
+            for (Role role : roles) {
+                roleIds.add(role.getId());
+            }
         }
-        return  userRoleMapper.selectRoleChildIds(roleIds);
+        return  roleIds.isEmpty() ? null : userRoleMapper.selectRoleChildIds(roleIds);
     }
 }

@@ -35,6 +35,9 @@
             <if test="roleRequest.name != null and roleRequest.name != '' and roleRequest.name.length > 0">
                 and role.name like concat('%',#{roleRequest.name},'%')
             </if>
+            <if test="roleRequest.code != null and roleRequest.code != '' and roleRequest.code.length > 0">
+                and role.code like concat('%',#{roleRequest.code},'%')
+            </if>
             <if test="roleChildIds != null and !roleChildIds.isEmpty()">
                 and role.id in
                 <foreach collection="roleChildIds" item="id" open="(" close=")" separator=",">

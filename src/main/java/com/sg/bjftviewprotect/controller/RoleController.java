@@ -3,15 +3,16 @@ package com.sg.bjftviewprotect.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.sg.bjftviewprotect.annotation.LoginVerification;
 import com.sg.bjftviewprotect.common.Result;
 import com.sg.bjftviewprotect.constant.CommonConstant;
 import com.sg.bjftviewprotect.entity.Role;
 import com.sg.bjftviewprotect.entity.RoleMenu;
+import com.sg.bjftviewprotect.entity.UserRole;
 import com.sg.bjftviewprotect.request.RoleRequest;
 import com.sg.bjftviewprotect.service.RoleMenuService;
 import com.sg.bjftviewprotect.service.RoleService;
 import com.sg.bjftviewprotect.service.UserRoleService;
-import com.sg.bjftviewprotect.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +32,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/role")
 @Tag(name = "角色管理")
+@LoginVerification
 public class RoleController {
-    @Autowired
-    private UserService userService;
     @Autowired
     private RoleService roleService;
 
@@ -43,33 +43,46 @@ public class RoleController {
     @Autowired
     private UserRoleService userRoleService;
 
+    @Operation(summary = "查询所有角色信息")
+    @GetMapping("/searchAllRole")
+    public Result<?> searchAllRole() {
+        List<Role> list = roleService.list();
+        return Result.success("查询成功",list);
+    }
+
+
+    @Operation(summary = "新增用户角色下拉宽")
+    @GetMapping("/searchRole")
+    public Result<?> searchRole(@CookieValue(value = CommonConstant.X_USER_ID) String userId) {
+        List<String> roleChildIds = userRoleService.searchRoleChildIds(userId);
+        RoleRequest roleRequest = new RoleRequest(){{
+            setPageNum(1);
+            setPageSize(100);
+        }};
+        return roleService.searchRole(roleRequest,roleChildIds);
+    }
+
+
     @Operation(summary = "查询角色信息")
     @PostMapping("/searchRole")
     public Result<?> searchRole(@RequestBody RoleRequest roleRequest,
-                                @RequestHeader("account") String account) {
+                                @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
         List<String> roleChildIds = new ArrayList<>();
         if (StringUtils.isBlank(roleRequest.getId())){
-            roleChildIds = userRoleService.searchRoleChildIds(account);
+            roleChildIds = userRoleService.searchRoleChildIds(userId);
         }
         return roleService.searchRole(roleRequest,roleChildIds);
     }
 
     @Operation(summary = "新增角色信息")
     @PostMapping("/saveRole")
-    public Result<?> saveRole(@RequestBody RoleRequest roleRequest) {
+    public Result<?> saveRole(@RequestBody RoleRequest roleRequest,
+                              @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
         try {
             parameterValidation(roleRequest);
         }catch (Exception e){
             return Result.fail(e.getMessage());
         }
-        if (StringUtils.isBlank(roleRequest.getCode())) {
-            return Result.fail("编码不能为空");
-        }
-        Role one = roleService.getOne(new LambdaQueryWrapper<Role>().eq(Role::getCode, roleRequest.getCode()),false);
-        if (!ObjectUtils.isEmpty(one)) {
-            return Result.fail("编号重复");
-        }
-
         Role role = new Role() {{
             setName(roleRequest.getName());
             setCode(roleRequest.getCode());
@@ -78,6 +91,11 @@ public class RoleController {
             setIsDelete(CommonConstant.NOT_DELETE);
         }};
         roleService.save(role);
+        // 新增完成后立即保存到该用户
+        userRoleService.save(new UserRole(){{
+            setRoleId(role.getId());
+            setUserId(userId);
+        }});
         if (!ObjectUtils.isEmpty(roleRequest.getMenuId())){
             List<String> menuIdList = roleRequest.getMenuId();
             List<RoleMenu> roleMenus = new ArrayList<>();
@@ -122,6 +140,8 @@ public class RoleController {
                 }});
             }
             roleMenuService.saveBatch(roleMenus);
+        } else {
+            roleMenuService.remove(new LambdaQueryWrapper<RoleMenu>().eq(RoleMenu::getRoleId, roleRequest.getId()));
         }
         return Result.success("操作成功");
     }
@@ -133,8 +153,8 @@ public class RoleController {
      */
     @Operation(summary = "删除角色信息")
     @DeleteMapping("/deleteRole")
-    public Result<?> deleteRole(@RequestParam(value = "id") String id) {
-        roleService.removeById(id);
+    public Result<?> deleteRole(@RequestParam(value = "roleId") String roleId) {
+        roleService.removeById(roleId);
         return Result.success("删除成功");
     }
 
@@ -144,11 +164,11 @@ public class RoleController {
      */
     public void parameterValidation(RoleRequest request){
         if (StringUtils.isBlank(request.getCode())) {
-            throw new RuntimeException("编号不能为空");
+            throw new RuntimeException("编码不能为空");
         }
         Role one = roleService.getOne(new LambdaQueryWrapper<Role>().eq(Role::getCode, request.getCode()),false);
         if (!ObjectUtils.isEmpty(one)) {
-            throw new RuntimeException("编号重复");
+            throw new RuntimeException("编码重复");
         }
     }
 

@@ -10,6 +10,7 @@ import com.sg.bjftviewprotect.constant.CommonConstant;
 import com.sg.bjftviewprotect.entity.User;
 import com.sg.bjftviewprotect.entity.UserRole;
 import com.sg.bjftviewprotect.request.UserRequest;
+import com.sg.bjftviewprotect.service.RoleService;
 import com.sg.bjftviewprotect.service.UserRoleService;
 import com.sg.bjftviewprotect.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,22 +41,26 @@ public class UserController {
     @Autowired
     private UserRoleService userRoleService;
 
+    @Autowired
+    private RoleService roleService;
+
     /**
      * 查询用户信息
      */
     @Operation(summary = "查询用户信息")
     @PostMapping("/searchUser")
     public Result<?> searchUser(@RequestBody UserRequest userRequest,
-                                @RequestHeader("account") String account) {
-        return userService.searchUser(userRequest, account);
+                                @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
+        return userService.searchUser(userRequest, userId);
     }
+
     /**
      * 新增用户信息
      */
     @Operation(summary = "新增用户信息")
     @PostMapping("/saveUser")
     public Result<?> saveUser(@RequestBody UserRequest userRequest,
-                              @RequestHeader("account") String account) {
+                              @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
         // 参数验证
         try {
             parameterValidation(userRequest);
@@ -69,7 +74,7 @@ public class UserController {
             setRemark(userRequest.getRemark());
             setIsEnable(userRequest.getIsEnable() == null ? 1 : userRequest.getIsEnable());
             setIsDelete(CommonConstant.NOT_DELETE);
-            setParentId(account);
+            setParentId(userId);
         }};
         userService.save(user);
         if (!ObjectUtils.isEmpty(userRequest.getRoleId())){
@@ -111,9 +116,7 @@ public class UserController {
             List<String> roleIdList = userRequest.getRoleId();
             List<UserRole> userRoles = new ArrayList<>();
             // 移除当前用户角色中间表信息
-            userRoleService.remove(new LambdaQueryWrapper<UserRole>(){{
-                eq(UserRole::getUserId, user.getId());
-            }});
+            userRoleService.remove(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, user.getId()));
             for (String roleId : roleIdList){
                 userRoles.add(new UserRole(){{
                     setUserId(user.getId());
@@ -121,6 +124,8 @@ public class UserController {
                 }});
             }
             userRoleService.saveBatch(userRoles);
+        } else {
+            userRoleService.remove(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, user.getId()));
         }
         return Result.success("操作成功");
     }
@@ -132,8 +137,8 @@ public class UserController {
      */
     @Operation(summary = "删除用户信息")
     @DeleteMapping("/deleteUser")
-    public Result<?> deleteUser(@RequestParam(value = "id") String id) {
-        userService.removeById(id);
+    public Result<?> deleteUser(@RequestParam("userId") String userId) {
+        userService.removeById(userId);
         return Result.success("删除成功");
     }
 
@@ -144,9 +149,7 @@ public class UserController {
         if (StringUtils.isBlank(request.getAccount())) {
             throw new RuntimeException("帐号不能为空");
         }
-        User one = userService.getOne(new LambdaQueryWrapper<User>() {{
-            eq(User::getAccount, request.getAccount());
-        }},false);
+        User one = userService.getOne(new LambdaQueryWrapper<User>().eq(User::getAccount, request.getAccount()),false);
         if (!ObjectUtils.isEmpty(one)) {
             throw new RuntimeException("帐号重复");
         }

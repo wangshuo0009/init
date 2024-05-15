@@ -14,5 +14,8 @@ import java.util.List;
  * @since 2024/05/11 11:45:34
  */
 public interface UserRoleService extends IService<UserRole> {
+    /**
+     * 根据用户id查询其角色及子角色id
+     */
     List<String> searchRoleChildIds(String userId);
 }

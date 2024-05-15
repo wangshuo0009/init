@@ -25,6 +25,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
     @Autowired
     private RoleMapper roleMapper;
+
     @Override
     public Result<?> searchRole(RoleRequest roleRequest, List<String> roleChildIds) {
         int pageNum = roleRequest.getPageNum() == null ? 1 : roleRequest.getPageNum();

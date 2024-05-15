@@ -48,7 +48,7 @@ public class Menu implements Serializable {
     @TableLogic
     private Integer isDelete;
 
-    @ApiModelProperty("类型")
+    @ApiModelProperty("类型 1三维，2后台管理系统")
     @TableField("type")
     private String type;
 

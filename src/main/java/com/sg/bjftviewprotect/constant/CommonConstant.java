@@ -15,4 +15,8 @@ public class CommonConstant {
     public static final Integer IS_ENABLE = 1;
     // 禁用
     public static final Integer NOT_ENABLE = 0;
+
+    public static final String X_USER_ID = "X-User-ID";
+    public static final String X_USER_ACCOUNT = "X-User-Account";
+
 }
