@@ -1,7 +1,7 @@
 package com.sg.bjftviewprotect.request;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -14,30 +14,31 @@ import java.util.List;
  * @Version 1.0
  **/
 @Data
+@Schema(description = "用户管理请求体")
 public class UserRequest {
-    @ApiModelProperty("id")
+    @Schema(description = "id")
     private String id;
 
-    @ApiModelProperty("名字")
+    @Schema(description = "名字")
     private String name;
 
-    @ApiModelProperty("帐号")
+    @Schema(description = "帐号")
     private String account;
 
-    @ApiModelProperty("密码")
+    @Schema(description = "密码")
     private String password;
 
-    @ApiModelProperty("状态1禁用0启用")
+    @Schema(description = "状态1禁用0启用")
     private Integer isEnable;
 
-    @ApiModelProperty("备注")
+    @Schema(description = "备注")
     @TableField("remark")
     private String remark;
 
-    @ApiModelProperty("创建时间")
+    @Schema(description = "创建时间")
     private LocalDateTime createTime;
 
-    @ApiModelProperty("角色id")
+    @Schema(description = "角色id数组")
     private List<String> roleId;
 
     private Integer pageSize;

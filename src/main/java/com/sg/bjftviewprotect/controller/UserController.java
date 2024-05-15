@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +78,7 @@ public class UserController {
             setIsEnable(userRequest.getIsEnable() == null ? 1 : userRequest.getIsEnable());
             setIsDelete(CommonConstant.NOT_DELETE);
             setParentId(userId);
+            setCreateTime(LocalDateTime.now());
         }};
         userService.save(user);
         if (!ObjectUtils.isEmpty(userRequest.getRoleId())){

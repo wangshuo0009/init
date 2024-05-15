@@ -18,7 +18,8 @@ public class Generator {
         FastAutoGenerator.create("jdbc:mysql://127.0.0.1:3306/bjftview_protect?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai", "root", "12345678")
                 .globalConfig(builder -> {
                     builder.author("wangshuo") // 设置作者
-                            .enableSwagger()//开启swagger
+                            //.enableSwagger()//开启swagger
+                            .enableSpringdoc()//开启swagger
                             .disableOpenDir()//不跳转文件夹目录
                             .dateType(DateType.ONLY_DATE)//时间策略
                             .commentDate("yyyy/MM/dd HH:mm:ss")//注释日期
@@ -26,7 +27,7 @@ public class Generator {
                 })
                 .packageConfig(builder -> {
                     //builder.parent("com.jssgwl.data.messages.documentation") // 设置父包名
-                    builder.parent("com.sg.bjftviewprotect") // 设置父包名
+                    builder.parent("com.sg.bjftviewprotect.test2") // 设置父包名
                             .entity("entity")
                             .service("service")
                             .serviceImpl("service.impl")

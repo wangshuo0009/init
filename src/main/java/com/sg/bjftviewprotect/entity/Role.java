@@ -4,12 +4,11 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -20,10 +19,9 @@ import java.util.List;
  * @author wangshuo
  * @since 2024/05/09 13:31:56
  */
-@Getter
-@Setter
+@Data
 @TableName("t_role")
-@ApiModel(value = "Role对象", description = "")
+@Schema(name = "Role", description = "$!{table.comment}")
 public class Role implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -31,37 +29,41 @@ public class Role implements Serializable {
     @TableId("id")
     private String id;
 
-    @ApiModelProperty("名称")
+    @Schema(description = "名称")
     @TableField("name")
     private String name;
 
-    @ApiModelProperty("编码")
+    @Schema(description = "编码")
     @TableField("code")
     private String code;
 
 
-    @ApiModelProperty("是否启用1启用，0禁用")
+    @Schema(description = "是否启用1启用，0禁用")
     @TableField("is_enable")
     private Integer isEnable;
 
-    @ApiModelProperty("是否删除1删除，0未删除")
+    @Schema(description = "是否删除1删除，0未删除")
     @TableField("is_delete")
     @TableLogic
     private Integer isDelete;
 
-    @ApiModelProperty("备注")
+    @Schema(description = "备注")
     @TableField("remark")
     private String remark;
 
-    @ApiModelProperty("权限等级")
+    @Schema(description = "权限等级")
     @TableField("permission_level")
     private String permissionLevel;
 
-    @ApiModelProperty("权限等级")
+    @Schema(description = "权限等级")
     @TableField("parent_id")
     private String parentId;
 
-    @ApiModelProperty("菜单")
+    @Schema(description = "创建时间")
+    @TableField("create_time")
+    private LocalDateTime createTime;
+
+    @Schema(description = "菜单")
     @TableField(exist = false)
     private List<Menu> menus;
 }

@@ -30,9 +30,9 @@ swagger:
 # springdoc-openapi项目配置
 springdoc:
   group-configs:
-    - group: 后端管理接口
+    - group: 1、后端管理接口
       packages-to-scan: com.sg.bjftviewprotect.controller
-    - group: 前端API接口
+    - group: 2、前端API接口
       packages-to-scan: com.sg.bjftviewprotect.controllerView
 
 knife4j:

@@ -1,6 +1,6 @@
 package com.sg.bjftviewprotect.request;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,10 +13,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class RegionalIntroductionRequest {
 
-    @ApiModelProperty("简介")
+    @Schema(description = "简介")
     private String introduction;
 
-    @ApiModelProperty("图片")
+    @Schema(description = "图片")
     private MultipartFile images;
 
 }

@@ -3,11 +3,10 @@ package com.sg.bjftviewprotect.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
 import java.io.Serializable;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * <p>
@@ -17,10 +16,9 @@ import lombok.Setter;
  * @author wangshuo
  * @since 2024/05/11 11:45:34
  */
-@Getter
-@Setter
+@Data
 @TableName("t_role_menu")
-@ApiModel(value = "RoleMenu对象", description = "")
+@Schema(name = "RoleMenu", description = "$!{table.comment}")
 public class RoleMenu implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -28,11 +26,11 @@ public class RoleMenu implements Serializable {
     @TableId("id")
     private String id;
 
-    @ApiModelProperty("角色id")
+    @Schema(description = "角色id")
     @TableField("role_id")
     private String roleId;
 
-    @ApiModelProperty("菜单id")
+    @Schema(description = "菜单id")
     @TableField("menu_id")
     private String menuId;
 }

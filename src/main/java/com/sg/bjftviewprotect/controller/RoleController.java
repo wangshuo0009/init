@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,6 +89,7 @@ public class RoleController {
             setRemark(roleRequest.getRemark());
             setIsEnable(roleRequest.getIsEnable() == null ? 1 : roleRequest.getIsEnable());
             setIsDelete(CommonConstant.NOT_DELETE);
+            setCreateTime(LocalDateTime.now());
         }};
         roleService.save(role);
         // 新增完成后立即保存到该用户

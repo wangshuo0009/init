@@ -1,10 +1,11 @@
 package com.sg.bjftviewprotect.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -17,10 +18,9 @@ import java.time.LocalDateTime;
  * @author wangshuo
  * @since 2024/05/09 09:30:21
  */
-@Getter
-@Setter
+@Data
 @TableName("t_regional_introduction")
-@ApiModel(value = "RegionalIntroduction对象", description = "")
+@Schema(name = "RegionalIntroduction", description = "$!{table.comment}")
 public class RegionalIntroduction implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -28,19 +28,19 @@ public class RegionalIntroduction implements Serializable {
     @TableId(value = "id")
     private String id;
 
-    @ApiModelProperty("简介")
+    @Schema(description = "简介")
     @TableField("introduction")
     private String introduction;
 
-    @ApiModelProperty("图片")
+    @Schema(description = "图片")
     @TableField("images")
     private String images;
 
-    @ApiModelProperty("创建时间")
+    @Schema(description = "创建时间")
     @TableField("create_time")
     private LocalDateTime createTime;
 
-    @ApiModelProperty("是否删除 1已删除 0未删除")
+    @Schema(description = "是否删除 1已删除 0未删除")
     @TableField("is_delete")
     @TableLogic
     private Integer isDelete;

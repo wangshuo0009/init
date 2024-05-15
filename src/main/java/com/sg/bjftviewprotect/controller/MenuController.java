@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.sg.bjftviewprotect.config.AdminConfig.adminRole;
@@ -77,6 +78,7 @@ public class MenuController {
             setIsEnable(CommonConstant.IS_ENABLE);
             setIsDelete(CommonConstant.NOT_DELETE);
             setType(menuRequest.getType());
+            setCreateTime(LocalDateTime.now());
         }};
         menuService.save(menu);
         return Result.success("新增成功");

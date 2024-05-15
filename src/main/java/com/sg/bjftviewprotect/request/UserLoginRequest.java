@@ -1,5 +1,6 @@
 package com.sg.bjftviewprotect.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
@@ -10,6 +11,8 @@ import lombok.Data;
  **/
 @Data
 public class UserLoginRequest {
+    @Schema(description = "账户")
     public String account;
+    @Schema(description = "密码")
     public String password;
 }

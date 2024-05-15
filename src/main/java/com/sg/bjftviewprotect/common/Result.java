@@ -1,7 +1,7 @@
 package com.sg.bjftviewprotect.common;
 
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
@@ -13,15 +13,15 @@ public class Result<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "是否成功")
+    @Schema(description = "是否成功")
     private Boolean success;
-    @ApiModelProperty(value = "返回状态码")
+    @Schema(description = "返回状态码")
     private Integer code;
-    @ApiModelProperty(value = "返回信息")
+    @Schema(description = "返回信息")
     private String message;
-    @ApiModelProperty(value = "返回数据")
+    @Schema(description = "返回数据")
     private T data;
-    @ApiModelProperty(value = "token验证")
+    @Schema(description = "token验证")
     private String token;
 
     public Result(HttpStatus unauthorized, String message, Object o, Object object) {

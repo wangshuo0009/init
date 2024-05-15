@@ -1,6 +1,6 @@
 package com.sg.bjftviewprotect.request;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.List;
@@ -15,20 +15,20 @@ import java.util.List;
 public class RoleRequest {
     private String id;
 
-    @ApiModelProperty("名称")
+    @Schema(description = "名称")
     private String name;
 
-    @ApiModelProperty("编码")
+    @Schema(description = "编码")
     private String code;
 
 
-    @ApiModelProperty("是否启用1启用，0禁用")
+    @Schema(description = "是否启用1启用，0禁用")
     private Integer isEnable;
 
-    @ApiModelProperty("备注")
+    @Schema(description = "备注")
     private String remark;
 
-    @ApiModelProperty("菜单")
+    @Schema(description = "菜单ID 数组")
     private List<String> menuId;
 
 
