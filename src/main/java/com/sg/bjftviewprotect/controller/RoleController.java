@@ -67,10 +67,7 @@ public class RoleController {
     @PostMapping("/searchRole")
     public Result<?> searchRole(@RequestBody RoleRequest roleRequest,
                                 @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
-        List<String> roleChildIds = new ArrayList<>();
-        if (StringUtils.isBlank(roleRequest.getId())){
-            roleChildIds = userRoleService.searchRoleChildIds(userId);
-        }
+        List<String> roleChildIds = userRoleService.searchRoleChildIds(userId);
         return roleService.searchRole(roleRequest,roleChildIds);
     }
 
