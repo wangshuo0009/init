@@ -5,9 +5,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sg.bjftviewprotect.system.common.CookieManager;
 import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.common.TokenManager;
+import com.sg.bjftviewprotect.system.config.AdminConfig;
+import com.sg.bjftviewprotect.system.entity.Role;
 import com.sg.bjftviewprotect.system.entity.User;
 import com.sg.bjftviewprotect.system.request.UserLoginRequest;
+import com.sg.bjftviewprotect.system.service.RoleService;
 import com.sg.bjftviewprotect.system.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
@@ -31,7 +35,8 @@ public class LoginController {
 
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private RoleService roleService;
     @PostMapping("/signIn")
     public Result<?> signIn(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request, HttpServletResponse response) {
         String account = userLoginRequest.getAccount();
@@ -49,6 +54,15 @@ public class LoginController {
         TokenManager.setUserToken(request, account, token);
 
         return Result.success(200, "登陆成功", account, token);
+    }
+
+
+    @Operation(summary = "刷新管理员角色信息", description = "预留接口省去重启服务，作用不大")
+    @GetMapping("refreshRole")
+    public Result<?> refreshRole(){
+        AdminConfig.adminRole = roleService.getOne(new LambdaQueryWrapper<Role>()
+                .eq(Role::getCode, "admin"));
+        return Result.success("刷新成功", AdminConfig.adminRole);
     }
 
 
