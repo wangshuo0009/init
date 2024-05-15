@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.sg.bjftviewprotect.config.AdminConfig.adminRole;
+
 /**
  * <p>
  *  前端控制器
@@ -47,8 +49,8 @@ public class MenuController {
     public Result<?> searchMenu(@RequestBody MenuRequest menuRequest,
                                 @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
         List<String> roleChildIds = userRoleService.searchRoleChildIds(userId);
-        // 1 为超级管理员
-        if (!ObjectUtils.isEmpty(roleChildIds) && roleChildIds.contains("1")) {
+        // 超级管理员角色处理逻辑
+        if (!ObjectUtils.isEmpty(roleChildIds) && roleChildIds.contains(adminRole.getId())) {
             int pageNum = menuRequest.getPageNum() == null ? 1 : menuRequest.getPageNum();
             int pageSize = menuRequest.getPageSize() == null ? 10 : menuRequest.getPageSize();
             Page<Menu> page = new Page<>(pageNum, pageSize);
