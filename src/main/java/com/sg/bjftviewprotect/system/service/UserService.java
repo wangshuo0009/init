@@ -16,4 +16,7 @@ import com.sg.bjftviewprotect.system.request.UserRequest;
 public interface UserService extends IService<User> {
     Result<?> searchUser(UserRequest userRequest, String roleIds);
 
+    Result<?> saveUser(UserRequest userRequest, String userId);
+
+    Result<?> updateUser(UserRequest userRequest);
 }

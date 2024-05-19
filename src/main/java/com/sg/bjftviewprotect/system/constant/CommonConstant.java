@@ -22,5 +22,9 @@ public class CommonConstant {
     public static final Integer THREE_DIMENSIONAL_TYPE_CODE = 1;
     public static final Integer MANAGER_SYSTEM_TYPE_CODE = 2;
 
+    public static final Integer DEFAULT_PAGE_SIZE = 10;
+    public static final Integer DEFAULT_PAGE_NUM = 1;
+    public static final Integer DEFAULT_PAGE_FOR_LIST_SIZE = 100;
+
 
 }

@@ -3,25 +3,20 @@ package com.sg.bjftviewprotect.system.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sg.bjftviewprotect.system.annotation.LoginVerification;
 import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.constant.CommonConstant;
 import com.sg.bjftviewprotect.system.entity.Role;
-import com.sg.bjftviewprotect.system.entity.RoleMenu;
-import com.sg.bjftviewprotect.system.entity.UserRole;
 import com.sg.bjftviewprotect.system.request.RoleRequest;
-import com.sg.bjftviewprotect.system.service.RoleMenuService;
 import com.sg.bjftviewprotect.system.service.RoleService;
-import com.sg.bjftviewprotect.system.service.UserRoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import static com.sg.bjftviewprotect.system.util.PageUtil.*;
 
 /**
  * <p>
@@ -39,29 +34,20 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
 
-    @Autowired
-    private RoleMenuService roleMenuService;
-
-    @Autowired
-    private UserRoleService userRoleService;
-
     @Operation(summary = "用户管理-角色查询条件列表", tags = "用户管理")
     @GetMapping("/searchAllRole")
     public Result<?> searchAllRole() {
-        List<Role> list = roleService.list();
-        return Result.success("查询成功",list);
+        Page<Role> page = createPageForList();
+        roleService.page(page);
+        return Result.success("查询成功",page);
     }
 
 
     @Operation(summary = "用户管理-新增用户角色列表", tags = "用户管理")
     @GetMapping("/searchRole")
     public Result<?> searchRole(@CookieValue(value = CommonConstant.X_USER_ID) String userId) {
-        List<String> roleChildIds = userRoleService.searchRoleChildIds(userId);
-        RoleRequest roleRequest = new RoleRequest(){{
-            setPageNum(1);
-            setPageSize(100);
-        }};
-        return roleService.searchRole(roleRequest,roleChildIds);
+        RoleRequest roleRequest = pageForList(new RoleRequest());
+        return roleService.searchRole(roleRequest,userId);
     }
 
 
@@ -69,8 +55,8 @@ public class RoleController {
     @PostMapping("/searchRole")
     public Result<?> searchRole(@RequestBody RoleRequest roleRequest,
                                 @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
-        List<String> roleChildIds = userRoleService.searchRoleChildIds(userId);
-        return roleService.searchRole(roleRequest,roleChildIds);
+        initPage(roleRequest);
+        return roleService.searchRole(roleRequest,userId);
     }
 
     @Operation(summary = "新增角色信息")
@@ -83,32 +69,7 @@ public class RoleController {
         }catch (Exception e){
             return Result.fail(e.getMessage());
         }
-        Role role = new Role() {{
-            setName(roleRequest.getName());
-            setCode(roleRequest.getCode());
-            setRemark(roleRequest.getRemark());
-            setIsEnable(roleRequest.getIsEnable() == null ? 1 : roleRequest.getIsEnable());
-            setIsDelete(CommonConstant.NOT_DELETE);
-            setCreateTime(LocalDateTime.now());
-        }};
-        roleService.save(role);
-        // 新增完成后立即保存到该用户
-        userRoleService.save(new UserRole(){{
-            setRoleId(role.getId());
-            setUserId(userId);
-        }});
-        if (!ObjectUtils.isEmpty(roleRequest.getMenuId())){
-            List<String> menuIdList = roleRequest.getMenuId();
-            List<RoleMenu> roleMenus = new ArrayList<>();
-            for (String menuId : menuIdList){
-                roleMenus.add(new RoleMenu(){{
-                    setRoleId(role.getId());
-                    setMenuId(menuId);
-                }});
-            }
-            roleMenuService.saveBatch(roleMenus);
-        }
-        return Result.success("操作成功");
+        return roleService.saveRole(roleRequest, userId);
     }
 
     /**
@@ -123,29 +84,7 @@ public class RoleController {
         }catch (Exception e){
             return Result.fail(e.getMessage());
         }
-        Role role = new Role() {{
-            setId(roleRequest.getId());
-            setName(roleRequest.getName());
-            setCode(roleRequest.getCode());
-            setRemark(roleRequest.getRemark());
-            setIsEnable(roleRequest.getIsEnable());
-        }};
-        roleService.updateById(role);
-        if (!ObjectUtils.isEmpty(roleRequest.getMenuId())){
-            List<String> menuIdList = roleRequest.getMenuId();
-            List<RoleMenu> roleMenus = new ArrayList<>();
-            roleMenuService.remove(new LambdaQueryWrapper<RoleMenu>().eq(RoleMenu::getRoleId, roleRequest.getId()));
-            for (String menuId : menuIdList){
-                roleMenus.add(new RoleMenu(){{
-                    setRoleId(role.getId());
-                    setMenuId(menuId);
-                }});
-            }
-            roleMenuService.saveBatch(roleMenus);
-        } else {
-            roleMenuService.remove(new LambdaQueryWrapper<RoleMenu>().eq(RoleMenu::getRoleId, roleRequest.getId()));
-        }
-        return Result.success("操作成功");
+        return roleService.updateRole(roleRequest);
     }
 
 

@@ -5,8 +5,6 @@ import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.entity.Role;
 import com.sg.bjftviewprotect.system.request.RoleRequest;
 
-import java.util.List;
-
 /**
  * <p>
  *  服务类
@@ -16,5 +14,8 @@ import java.util.List;
  * @since 2024/05/09 13:31:56
  */
 public interface RoleService extends IService<Role> {
-    Result<?> searchRole(RoleRequest roleRequest, List<String> roleChildIds);
+    Result<?> searchRole(RoleRequest roleRequest, String roleChildIds);
+
+    Result<?> saveRole(RoleRequest roleRequest, String userId);
+    Result<?> updateRole(RoleRequest roleRequest);
 }

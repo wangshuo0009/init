@@ -1,6 +1,5 @@
 package com.sg.bjftviewprotect.system.controller;
 
-import cn.hutool.crypto.digest.MD5;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -8,20 +7,13 @@ import com.sg.bjftviewprotect.system.annotation.LoginVerification;
 import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.constant.CommonConstant;
 import com.sg.bjftviewprotect.system.entity.User;
-import com.sg.bjftviewprotect.system.entity.UserRole;
 import com.sg.bjftviewprotect.system.request.UserRequest;
-import com.sg.bjftviewprotect.system.service.RoleService;
-import com.sg.bjftviewprotect.system.service.UserRoleService;
 import com.sg.bjftviewprotect.system.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <p>
@@ -39,12 +31,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private UserRoleService userRoleService;
-
-    @Autowired
-    private RoleService roleService;
 
     /**
      * 查询用户信息
@@ -70,29 +56,7 @@ public class UserController {
         }catch (Exception e){
             return Result.fail(e.getMessage());
         }
-        User user = new User() {{
-            setName(userRequest.getName());
-            setPassword(StringUtils.isBlank(userRequest.getPassword()) ? null : MD5.create().digestHex(userRequest.getPassword()));
-            setAccount(userRequest.getAccount());
-            setRemark(userRequest.getRemark());
-            setIsEnable(userRequest.getIsEnable() == null ? 1 : userRequest.getIsEnable());
-            setIsDelete(CommonConstant.NOT_DELETE);
-            setParentId(userId);
-            setCreateTime(LocalDateTime.now());
-        }};
-        userService.save(user);
-        if (!ObjectUtils.isEmpty(userRequest.getRoleId())){
-            List<String> roleIdList = userRequest.getRoleId();
-            List<UserRole> userRoles = new ArrayList<>();
-            for (String roleId : roleIdList){
-                userRoles.add(new UserRole(){{
-                    setUserId(user.getId());
-                    setRoleId(roleId);
-                }});
-            }
-            userRoleService.saveBatch(userRoles);
-        }
-        return Result.success("操作成功");
+        return userService.saveUser(userRequest, userId);
     }
 
     /**
@@ -108,31 +72,7 @@ public class UserController {
         }catch (Exception e){
             return Result.fail(e.getMessage());
         }
-        User user = new User() {{
-            setId(userRequest.getId());
-            setName(userRequest.getName());
-            setPassword(StringUtils.isBlank(userRequest.getPassword()) ? null : MD5.create().digestHex(userRequest.getPassword()));
-            setAccount(userRequest.getAccount());
-            setRemark(userRequest.getRemark());
-            setIsEnable(userRequest.getIsEnable());
-        }};
-        userService.updateById(user);
-        if (!ObjectUtils.isEmpty(userRequest.getRoleId())){
-            List<String> roleIdList = userRequest.getRoleId();
-            List<UserRole> userRoles = new ArrayList<>();
-            // 移除当前用户角色中间表信息
-            userRoleService.remove(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, user.getId()));
-            for (String roleId : roleIdList){
-                userRoles.add(new UserRole(){{
-                    setUserId(user.getId());
-                    setRoleId(roleId);
-                }});
-            }
-            userRoleService.saveBatch(userRoles);
-        } else {
-            userRoleService.remove(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, user.getId()));
-        }
-        return Result.success("操作成功");
+        return userService.updateUser(userRequest);
     }
 
 

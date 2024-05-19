@@ -3,22 +3,20 @@ package com.sg.bjftviewprotect.system.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sg.bjftviewprotect.system.annotation.LoginVerification;
 import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.constant.CommonConstant;
 import com.sg.bjftviewprotect.system.entity.Menu;
 import com.sg.bjftviewprotect.system.request.MenuRequest;
 import com.sg.bjftviewprotect.system.service.MenuService;
-import com.sg.bjftviewprotect.system.service.UserRoleService;
-import com.sg.bjftviewprotect.system.config.AdminConfig;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
+
+import static com.sg.bjftviewprotect.system.util.PageUtil.pageForList;
 
 /**
  * <p>
@@ -35,40 +33,18 @@ import java.util.List;
 public class MenuController {
     @Autowired
     private MenuService menuService;
-    @Autowired
-    private UserRoleService userRoleService;
-
     @Operation(summary = "角色管理-绑定菜单列表", tags = "角色管理")
     @GetMapping("searchAllMenu")
     public Result<?> searchAllMenu(@CookieValue(value = CommonConstant.X_USER_ID) String userId) {
-        List<String> roleChildIds = userRoleService.searchRoleChildIds(userId);
-        // 超级管理员角色处理逻辑
-        if (!ObjectUtils.isEmpty(roleChildIds) && roleChildIds.contains(AdminConfig.adminRole.getId())) {
-            return Result.success("查询成功",menuService.list());
-        }
-        MenuRequest menuRequest = new MenuRequest(){{
-            setPageNum(1);
-            setPageSize(100);
-        }};
-        return menuService.searchMenu(menuRequest,roleChildIds);    }
+        MenuRequest menuRequest = pageForList(new MenuRequest());
+        return menuService.searchMenu(menuRequest,userId);
+    }
 
     @Operation(summary = "查询菜单信息")
     @PostMapping("searchMenu")
     public Result<?> searchMenu(@RequestBody MenuRequest menuRequest,
                                 @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
-        List<String> roleChildIds = userRoleService.searchRoleChildIds(userId);
-        // 超级管理员角色处理逻辑
-        if (!ObjectUtils.isEmpty(roleChildIds) && roleChildIds.contains(AdminConfig.adminRole.getId())) {
-            int pageNum = menuRequest.getPageNum() == null ? 1 : menuRequest.getPageNum();
-            int pageSize = menuRequest.getPageSize() == null ? 10 : menuRequest.getPageSize();
-            Page<Menu> page = new Page<>(pageNum, pageSize);
-            menuService.page(page,new LambdaQueryWrapper<Menu>()
-                    .eq(StringUtils.isNotBlank(menuRequest.getId()), Menu::getId, menuRequest.getId())
-                    .like(StringUtils.isNotBlank(menuRequest.getName()), Menu::getName, menuRequest.getName())
-                    .like(StringUtils.isNotBlank(menuRequest.getCode()), Menu::getCode, menuRequest.getCode()));
-            return Result.success("查询成功",page);
-        }
-        return menuService.searchMenu(menuRequest,roleChildIds);
+        return menuService.searchMenu(menuRequest,userId);
     }
 
     @Operation(summary = "新增菜单")
