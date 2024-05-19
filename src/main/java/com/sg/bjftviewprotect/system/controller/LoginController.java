@@ -5,17 +5,16 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sg.bjftviewprotect.system.common.CookieManager;
 import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.common.TokenManager;
-import com.sg.bjftviewprotect.system.config.AdminConfig;
-import com.sg.bjftviewprotect.system.entity.Role;
 import com.sg.bjftviewprotect.system.entity.User;
 import com.sg.bjftviewprotect.system.request.UserLoginRequest;
-import com.sg.bjftviewprotect.system.service.RoleService;
 import com.sg.bjftviewprotect.system.service.UserService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,8 +34,7 @@ public class LoginController {
 
     @Autowired
     private UserService userService;
-    @Autowired
-    private RoleService roleService;
+
     @PostMapping("/signIn")
     public Result<?> signIn(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request, HttpServletResponse response) {
         String account = userLoginRequest.getAccount();
@@ -57,13 +55,6 @@ public class LoginController {
     }
 
 
-    @Operation(summary = "刷新管理员角色信息", description = "预留接口省去重启服务，作用不大")
-    @GetMapping("refreshRole")
-    public Result<?> refreshRole(){
-        AdminConfig.adminRole = roleService.getOne(new LambdaQueryWrapper<Role>()
-                .eq(Role::getCode, "admin"));
-        return Result.success("刷新成功", AdminConfig.adminRole);
-    }
 
 
 }
