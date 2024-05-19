@@ -21,13 +21,6 @@ mybatis-plus:
       logic-delete-value: 1 # 逻辑已删除值(默认为 1)
       logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
 
-# springdoc-openapi项目配置
-springdoc:
-  group-configs:
-    - group: 1、后端管理接口
-      packages-to-scan: com.sg.bjftviewprotect.system.controller
-    - group: 2、三维API接口
-      packages-to-scan: com.sg.bjftviewprotect.view.controller
 
 knife4j:
   enable: true

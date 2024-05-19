@@ -8,7 +8,15 @@ spring:
 
 
 
-
+# springdoc-openapi项目配置
+springdoc:
+  group-configs:
+    - group: 1、后端管理接口
+      packages-to-scan: com.sg.bjftviewprotect.system.controller
+    - group: 2、数据管理
+      packages-to-scan: com.sg.bjftviewprotect.system.controllerDate
+    - group: 3、三维API接口
+      packages-to-scan: com.sg.bjftviewprotect.view.controller
 
 
 ##log4j 日志输出
