@@ -1,7 +1,10 @@
 package com.sg.bjftviewprotect.system.config;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.sg.bjftviewprotect.system.entity.Config;
 import com.sg.bjftviewprotect.system.entity.Role;
+import com.sg.bjftviewprotect.system.service.ConfigService;
 import com.sg.bjftviewprotect.system.service.RoleService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,19 +23,25 @@ import javax.annotation.PostConstruct;
 public class AdminConfig {
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private ConfigService configService;
     public static Role adminRole;
     @PostConstruct
     public void init() {
         log.error("===========================================================================");
         log.error("==================《《《《开始初始化获取超级管理员角色》》》》====================");
         log.error("===========================================================================");
+        Config superAdmin = configService.getSuperAdmin();
+
         // 在这里执行初始化逻辑
-        // 超级管理员角色只能唯一 数据库里编码必须为 admin 不要修改
         adminRole = roleService.getOne(new LambdaQueryWrapper<Role>()
-                .eq(Role::getCode, "admin")
+                .eq(Role::getId, superAdmin.getCode())
         );
 
         log.error("===========================================================================");
+        if (ObjectUtils.isEmpty(adminRole)) {
+            log.error("======================《《《《超级管理员角色获取失败》》》》》===================");
+        }
         log.error("======================《《《《超级管理员角色获取成功》》》》》===================");
         log.error("===========================================================================");
     }
