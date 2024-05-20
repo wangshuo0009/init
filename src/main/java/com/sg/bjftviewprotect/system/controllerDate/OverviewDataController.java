@@ -1,24 +1,20 @@
 package com.sg.bjftviewprotect.system.controllerDate;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.entity.AreaUserCount;
 import com.sg.bjftviewprotect.system.entity.PowerGridView;
-import com.sg.bjftviewprotect.system.entity.RegionalIntroduction;
 import com.sg.bjftviewprotect.system.request.RegionalIntroductionRequest;
 import com.sg.bjftviewprotect.system.service.AreaUserCountService;
 import com.sg.bjftviewprotect.system.service.PowerGridViewService;
 import com.sg.bjftviewprotect.system.service.RegionalIntroductionService;
-import com.sg.bjftviewprotect.system.util.ImagesUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
@@ -43,22 +39,7 @@ public class OverviewDataController {
     @PostMapping("/regionalIntroduction")
     @Transactional(rollbackFor = Exception.class)
     public Result<?> insertOrUpdateRegionalIntroduction(RegionalIntroductionRequest regionalIntroductionRequest) {
-        String imageToBase64 = ImagesUtils.imageToBase64(regionalIntroductionRequest.getImages());
-        if (StringUtils.isBlank(imageToBase64)) {
-            return Result.fail("插入失败，图片异常");
-        }
-        RegionalIntroduction regionalIntroduction = new RegionalIntroduction() {{
-            setId(regionalIntroductionRequest.getId());
-            setIntroduction(regionalIntroductionRequest.getIntroduction());
-            setImages(imageToBase64);
-        }};
-        if (StringUtils.isBlank(regionalIntroductionRequest.getId())){
-            regionalIntroductionService.remove(new LambdaQueryWrapper<>());
-            regionalIntroduction.setCreateTime(LocalDateTime.now());
-            regionalIntroduction.setIsDelete(0);
-        }
-        regionalIntroductionService.saveOrUpdate(regionalIntroduction);
-        return Result.success("操作成功");
+        return regionalIntroductionService.saveOrUpdateRegionalIntroduction(regionalIntroductionRequest);
     }
 
 
