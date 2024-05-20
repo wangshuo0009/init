@@ -23,6 +23,9 @@
         SELECT
             <include refid="userAllColumn"/>
         FROM t_user user
+        <if test="userRequest.roleId != null and !userRequest.roleId.isEmpty()">
+            left join t_user_role role on user.id = role.user_id
+        </if>
         <where>
             user.is_delete = 0
             <if test="userRequest.id != null and userRequest.id != '' and userRequest.id.length > 0">
@@ -35,6 +38,12 @@
                 and user.id in
                 <foreach collection="userChildIds" item="userId" open="(" close=")" separator=",">
                     #{userId}
+                </foreach>
+            </if>
+            <if test="userRequest.roleId != null and !userRequest.roleId.isEmpty()">
+                and role.role_id in
+                <foreach collection="userRequest.roleId" item="roleId" open="(" close=")" separator=",">
+                    #{roleId}
                 </foreach>
             </if>
         </where>

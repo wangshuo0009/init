@@ -1,7 +1,11 @@
 package com.sg.bjftviewprotect.view.controller;
 
 import com.sg.bjftviewprotect.system.common.Result;
+import com.sg.bjftviewprotect.system.entity.AreaUserCount;
+import com.sg.bjftviewprotect.system.entity.PowerGridView;
 import com.sg.bjftviewprotect.system.entity.RegionalIntroduction;
+import com.sg.bjftviewprotect.system.service.AreaUserCountService;
+import com.sg.bjftviewprotect.system.service.PowerGridViewService;
 import com.sg.bjftviewprotect.system.service.RegionalIntroductionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,7 +30,10 @@ import java.util.List;
 public class OverviewController {
     @Autowired
     private RegionalIntroductionService regionalIntroductionService;
-
+    @Autowired
+    private AreaUserCountService areaUserCountService;
+    @Autowired
+    private PowerGridViewService powerGridViewService;
     @Operation(summary = "北京丰台区域简介查询接口")
     @GetMapping("/regionalIntroduction")
     public Result<?> searchRegionalIntroduction() {
@@ -44,8 +51,8 @@ public class OverviewController {
     @Operation(summary = "区域用户统计查询接口")
     @GetMapping("/areaUserCount")
     public Result<?> areaUserCount() {
-
-        return Result.success("查询成功");
+        List<AreaUserCount> list = areaUserCountService.list();
+        return Result.success("查询成功",list);
     }
 
     @Operation(summary = "区域用电量统计查询接口")
@@ -82,8 +89,8 @@ public class OverviewController {
     @Operation(summary = "电网概览统计查询接口")
     @GetMapping("/powerGridView")
     public Result<?> powerGridView() {
-
-        return Result.success("查询成功");
+        List<PowerGridView> list = powerGridViewService.list();
+        return Result.success("查询成功", list);
     }
 
 

@@ -10,13 +10,11 @@ import com.sg.bjftviewprotect.system.constant.CommonConstant;
 import com.sg.bjftviewprotect.system.entity.Role;
 import com.sg.bjftviewprotect.system.request.RoleRequest;
 import com.sg.bjftviewprotect.system.service.RoleService;
+import com.sg.bjftviewprotect.system.util.PageUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import static com.sg.bjftviewprotect.system.util.PageUtil.*;
 
 /**
  * <p>
@@ -37,7 +35,7 @@ public class RoleController {
     @Operation(summary = "用户管理-角色查询条件列表", tags = "用户管理")
     @GetMapping("/searchAllRole")
     public Result<?> searchAllRole() {
-        Page<Role> page = createPageForList();
+        Page<Role> page = PageUtil.createPageForList();
         roleService.page(page);
         return Result.success("查询成功",page);
     }
@@ -46,7 +44,7 @@ public class RoleController {
     @Operation(summary = "用户管理-新增用户角色列表", tags = "用户管理")
     @GetMapping("/searchRole")
     public Result<?> searchRole(@CookieValue(value = CommonConstant.X_USER_ID) String userId) {
-        RoleRequest roleRequest = pageForList(new RoleRequest());
+        RoleRequest roleRequest = PageUtil.pageForList(new RoleRequest());
         return roleService.searchRole(roleRequest,userId);
     }
 
@@ -55,13 +53,12 @@ public class RoleController {
     @PostMapping("/searchRole")
     public Result<?> searchRole(@RequestBody RoleRequest roleRequest,
                                 @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
-        initPage(roleRequest);
+        PageUtil.initPage(roleRequest);
         return roleService.searchRole(roleRequest,userId);
     }
 
     @Operation(summary = "新增角色信息")
     @PostMapping("/saveRole")
-    @Transactional(rollbackFor = Exception.class)
     public Result<?> saveRole(@RequestBody RoleRequest roleRequest,
                               @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
         try {
@@ -77,7 +74,6 @@ public class RoleController {
      */
     @Operation(summary = "更新角色信息")
     @PostMapping("/updateRole")
-    @Transactional(rollbackFor = Exception.class)
     public Result<?> updateRole(@RequestBody RoleRequest roleRequest) {
         try {
             parameterValidation(roleRequest);
@@ -93,9 +89,9 @@ public class RoleController {
      * 删除角色信息
      */
     @Operation(summary = "删除角色信息")
-    @DeleteMapping("/deleteRole")
-    public Result<?> deleteRole(@RequestParam(value = "roleId") String roleId) {
-        roleService.removeById(roleId);
+    @DeleteMapping("/deleteRole/{id}")
+    public Result<?> deleteRole(@PathVariable("id") String id) {
+        roleService.removeById(id);
         return Result.success("删除成功");
     }
 

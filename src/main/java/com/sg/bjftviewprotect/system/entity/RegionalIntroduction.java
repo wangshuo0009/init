@@ -2,7 +2,6 @@ package com.sg.bjftviewprotect.system.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -42,6 +41,5 @@ public class RegionalIntroduction implements Serializable {
 
     @Schema(description = "是否删除 1已删除 0未删除")
     @TableField("is_delete")
-    @TableLogic
     private Integer isDelete;
 }

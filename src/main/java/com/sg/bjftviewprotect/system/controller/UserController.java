@@ -9,10 +9,10 @@ import com.sg.bjftviewprotect.system.constant.CommonConstant;
 import com.sg.bjftviewprotect.system.entity.User;
 import com.sg.bjftviewprotect.system.request.UserRequest;
 import com.sg.bjftviewprotect.system.service.UserService;
+import com.sg.bjftviewprotect.system.util.PageUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -39,6 +39,7 @@ public class UserController {
     @PostMapping("/searchUser")
     public Result<?> searchUser(@RequestBody UserRequest userRequest,
                                 @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
+        PageUtil.initPage(userRequest);
         return userService.searchUser(userRequest, userId);
     }
 
@@ -47,7 +48,6 @@ public class UserController {
      */
     @Operation(summary = "新增用户信息")
     @PostMapping("/saveUser")
-    @Transactional(rollbackFor = Exception.class)
     public Result<?> saveUser(@RequestBody UserRequest userRequest,
                               @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
         // 参数验证
@@ -64,7 +64,6 @@ public class UserController {
      */
     @Operation(summary = "更新用户信息")
     @PostMapping("/updateUser")
-    @Transactional(rollbackFor = Exception.class)
     public Result<?> updateUser(@RequestBody UserRequest userRequest) {
         // 参数验证
         try {
@@ -81,9 +80,9 @@ public class UserController {
      * 删除用户信息
      */
     @Operation(summary = "删除用户信息")
-    @DeleteMapping("/deleteUser")
-    public Result<?> deleteUser(@RequestParam("userId") String userId) {
-        userService.removeById(userId);
+    @DeleteMapping("/deleteUser/{id}")
+    public Result<?> deleteUser(@PathVariable("id") String id) {
+        userService.removeById(id);
         return Result.success("删除成功");
     }
 

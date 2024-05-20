@@ -3,6 +3,7 @@ package com.sg.bjftviewprotect.system.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.sg.bjftviewprotect.system.annotation.LoginVerification;
 import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.constant.CommonConstant;
 import com.sg.bjftviewprotect.system.entity.MenuModules;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/menuModules")
 @Tag(name = "菜单子模块管理")
+@LoginVerification
 public class MenuModulesController {
 
     @Autowired
@@ -48,8 +50,8 @@ public class MenuModulesController {
         return menuService.searchAllByType(type);
     }
 
-    @Operation(summary = "新增更新子模块")
-    @GetMapping("/saveOrUpdateMenuModules")
+    @Operation(summary = "新增更和新子模块")
+    @PostMapping("/saveOrUpdateMenuModules")
     public Result<?> saveOrUpdateMenuModules(@RequestBody MenuModules menuModules) {
         // 参数验证
         try {
@@ -58,13 +60,13 @@ public class MenuModulesController {
             return Result.fail(e.getMessage());
         }
         menuModulesService.saveOrUpdate(menuModules);
-        return Result.success("新增成功");
+        return Result.success("操作成功");
     }
 
     @Operation(summary = "删除子模块")
-    @DeleteMapping("/deleteMenuModules")
-    public Result<?> deleteMenuModules(@RequestParam("menuModulesId") String menuModulesId) {
-        menuModulesService.removeById(menuModulesId);
+    @DeleteMapping("/deleteMenuModules/{id}")
+    public Result<?> deleteMenuModules(@PathVariable("id") String id) {
+        menuModulesService.removeById(id);
         return Result.success("新增成功");
     }
 

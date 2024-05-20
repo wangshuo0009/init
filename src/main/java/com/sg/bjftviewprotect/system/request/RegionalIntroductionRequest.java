@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
  **/
 @Data
 public class RegionalIntroductionRequest {
+    @Schema(description = "简介")
+    private String id;
 
     @Schema(description = "简介")
     private String introduction;

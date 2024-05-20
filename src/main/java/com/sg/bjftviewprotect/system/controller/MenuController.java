@@ -9,14 +9,13 @@ import com.sg.bjftviewprotect.system.constant.CommonConstant;
 import com.sg.bjftviewprotect.system.entity.Menu;
 import com.sg.bjftviewprotect.system.request.MenuRequest;
 import com.sg.bjftviewprotect.system.service.MenuService;
+import com.sg.bjftviewprotect.system.util.PageUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-
-import static com.sg.bjftviewprotect.system.util.PageUtil.pageForList;
 
 /**
  * <p>
@@ -36,7 +35,7 @@ public class MenuController {
     @Operation(summary = "角色管理-绑定菜单列表", tags = "角色管理")
     @GetMapping("searchAllMenu")
     public Result<?> searchAllMenu(@CookieValue(value = CommonConstant.X_USER_ID) String userId) {
-        MenuRequest menuRequest = pageForList(new MenuRequest());
+        MenuRequest menuRequest = PageUtil.pageForList(new MenuRequest());
         return menuService.searchMenu(menuRequest,userId);
     }
 
@@ -97,8 +96,8 @@ public class MenuController {
      */
     @Operation(summary = "删除菜单")
     @DeleteMapping("/deleteMenu")
-    public Result<?> deleteMenu(@RequestParam("menuId") String menuId) {
-        menuService.removeById(menuId);
+    public Result<?> deleteMenu(@RequestParam("id") String id) {
+        menuService.removeById(id);
         return Result.success("删除成功");
     }
 

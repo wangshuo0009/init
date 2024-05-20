@@ -40,9 +40,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public Result<?> searchUser(UserRequest userRequest, String userId) {
-        int pageNum = userRequest.getPageNum() == null ? CommonConstant.DEFAULT_PAGE_NUM : userRequest.getPageNum();
-        int pageSize = userRequest.getPageSize() == null ? CommonConstant.DEFAULT_PAGE_SIZE : userRequest.getPageSize();
-        Page<User> page = new Page<>(pageNum,pageSize);
+        Page<User> page = new Page<>(userRequest.getPageNum(),userRequest.getPageSize());
         List<String> userChildIds = userMapper.selectUserChildIds(userId);
         return Result.success("查询成功", userMapper.selectAllUser(page,userRequest,userChildIds));
     }

@@ -27,17 +27,17 @@ public class Generator {
                 })
                 .packageConfig(builder -> {
                     //builder.parent("com.jssgwl.data.messages.documentation") // 设置父包名
-                    builder.parent("com.sg.bjftviewprotect") // 设置父包名
+                    builder.parent("com.sg.bjftviewprotect.system") // 设置父包名
                             .entity("entity")
                             .service("service")
                             .serviceImpl("service.impl")
                             .mapper("mapper")
                             .xml("mapper.xml")
                             .controller("controller")
-                            .pathInfo(Collections.singletonMap(OutputFile.xml, System.getProperty("user.dir")+"/src/main/resources/mapper")); // 设置mapperXml生成路径
+                            .pathInfo(Collections.singletonMap(OutputFile.xml, System.getProperty("user.dir")+"/src/main/resources/mapper/system")); // 设置mapperXml生成路径
                 })
                 .strategyConfig(builder -> {
-                    builder.addInclude("t_menu_modules") // 设置需要生成的表名
+                    builder.addInclude("t_power_grid_view") // 设置需要生成的表名
                             .addTablePrefix("t_") // 设置过滤表前缀
                             .controllerBuilder()
                             .enableRestStyle()//开启restful风格
