@@ -5,10 +5,8 @@ import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.sg.bjftviewprotect.system.annotation.LoginVerification;
 import com.sg.bjftviewprotect.system.common.Result;
-import com.sg.bjftviewprotect.system.constant.CommonConstant;
 import com.sg.bjftviewprotect.system.entity.MenuModules;
 import com.sg.bjftviewprotect.system.service.MenuModulesService;
-import com.sg.bjftviewprotect.system.service.MenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,24 +29,6 @@ public class MenuModulesController {
     @Autowired
     private MenuModulesService menuModulesService;
 
-    @Autowired
-    private MenuService menuService;
-
-    @Operation(summary = "三维菜单路由信息查询", description = "包含某个页面下的小模块")
-    @GetMapping("/threeDimensional")
-    public Result<?> threeDimensional() {
-        return getMenuAndMenuModules(CommonConstant.THREE_DIMENSIONAL_TYPE_CODE);
-    }
-
-    @Operation(summary = "后台管理系统菜单路由信息", description = "包含某个页面下的小模块")
-    @GetMapping("/managerSystem")
-    public Result<?> managerSystem() {
-        return getMenuAndMenuModules(CommonConstant.MANAGER_SYSTEM_TYPE_CODE);
-    }
-
-    public Result<?> getMenuAndMenuModules(Integer type) {
-        return menuService.searchAllByType(type);
-    }
 
     @Operation(summary = "新增更和新子模块")
     @PostMapping("/saveOrUpdateMenuModules")
