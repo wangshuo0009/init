@@ -25,7 +25,7 @@ public class MenuRequest {
     private Integer isEnable;
 
     @Schema(description = "类型 1三维，2后台管理系统")
-    private String type;
+    private Integer type;
 
     @Schema(description = "备注")
     private String remark;

@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sg.bjftviewprotect.system.mapper.UserMapper">
 
+    <!-- 这种会有性能问题   -->
     <resultMap id="userWithRolesResultMap" type="com.sg.bjftviewprotect.system.entity.User">
         <id property="id" column="id" />
         <collection property="roles" javaType="java.util.List" column="id" fetchType="eager"
@@ -17,10 +18,11 @@
             user.is_enable,
             user.is_delete,
             user.remark,
-            user.create_time
+            user.create_time,
+            user.parent_id
     </sql>
 
-    <select id="selectAllUser" resultMap="userWithRolesResultMap">
+    <select id="selectAllUser" resultType="com.sg.bjftviewprotect.system.entity.User">
         SELECT
             <include refid="userAllColumn"/>
         FROM t_user user

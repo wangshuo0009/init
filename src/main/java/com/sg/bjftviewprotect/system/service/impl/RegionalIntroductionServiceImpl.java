@@ -41,9 +41,9 @@ public class RegionalIntroductionServiceImpl extends ServiceImpl<RegionalIntrodu
             setImages(imageToBase64);
         }};
         if (StringUtils.isBlank(regionalIntroductionRequest.getId())){
-            regionalIntroductionMapper.delete(new LambdaQueryWrapper<>());
             regionalIntroduction.setCreateTime(LocalDateTime.now());
             regionalIntroduction.setIsDelete(0);
+            regionalIntroductionMapper.delete(new LambdaQueryWrapper<>());
             regionalIntroductionMapper.insert(regionalIntroduction);
         } else {
             regionalIntroductionMapper.updateById(regionalIntroduction);

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.config.AdminConfig;
+import com.sg.bjftviewprotect.system.constant.CommonConstant;
 import com.sg.bjftviewprotect.system.entity.Menu;
 import com.sg.bjftviewprotect.system.mapper.MenuMapper;
 import com.sg.bjftviewprotect.system.request.MenuRequest;
@@ -14,7 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -45,7 +50,18 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     }
 
     public Result<?> searchAllByType(Integer type) {
-        return Result.success("查询成功",menuMapper.selectAllByType(type));
+        List<Menu> menus = menuMapper.selectAllByType(type);
+        // 三维的路由
+        if (Objects.equals(type, CommonConstant.THREE_DIMENSIONAL_TYPE_CODE)){
+            return Result.success("查询成功",menus);
+        } else {
+            // 后台管理的路由
+            Map<Integer, List<Menu>> groupedMenus = new HashMap<>();
+            if (!ObjectUtils.isEmpty(menus)) {
+                groupedMenus = menus.stream().collect(Collectors.groupingBy(Menu::getType));
+            }
+            return Result.success("查询成功",groupedMenus);
+        }
     }
 
 

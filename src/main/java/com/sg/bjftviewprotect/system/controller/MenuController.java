@@ -109,7 +109,7 @@ public class MenuController {
         if (StringUtils.isBlank(request.getCode())) {
             throw new RuntimeException("编码不能为空");
         }
-        if (StringUtils.isBlank(request.getType())) {
+        if (request.getType() == null) {
             throw new RuntimeException("类型不能为空");
         }
         Menu one = menuService.getOne(new LambdaQueryWrapper<Menu>().eq(Menu::getCode, request.getCode()),false);

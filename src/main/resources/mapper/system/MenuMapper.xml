@@ -3,9 +3,27 @@
 <mapper namespace="com.sg.bjftviewprotect.system.mapper.MenuMapper">
 
     <resultMap id="menuWithMenuModules" type="com.sg.bjftviewprotect.system.entity.Menu">
-        <id property="id" column="id" />
-        <collection property="menuModules" ofType="com.sg.bjftviewprotect.system.entity.MenuModules" javaType="java.util.List"
-                    column="id" select="com.sg.bjftviewprotect.system.mapper.MenuModulesMapper.selectByMenuId">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="isEnable" column="is_enable"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="type" column="type"/>
+        <result property="remark" column="remark"/>
+        <result property="createTime" column="createTime"/>
+        <result property="url" column="url"/>
+        <result property="sortNo" column="sortNo"/>
+        <collection property="menuModules" ofType="com.sg.bjftviewprotect.system.entity.MenuModules" javaType="java.util.List">
+            <id property="id" column="modulesId"/>
+            <result property="name" column="modulesName"/>
+            <result property="code" column="modulesCode"/>
+            <result property="isEnable" column="modulesISEnable"/>
+            <result property="menuId" column="modulesMenuId"/>
+            <result property="remark" column="modulesRemark"/>
+            <result property="url" column="modulesUrl"/>
+            <result property="isDelete" column="modulesIsDelete"/>
+            <result property="createTime" column="modulesCreateTime"/>
+            <result property="sortNo" column="modulesSortNo"/>
         </collection>
     </resultMap>
 
@@ -15,10 +33,23 @@
             menu.code,
             menu.is_enable,
             menu.is_delete,
-            menu.remark,
             menu.type,
+            menu.remark,
+            menu.create_time,
             menu.url,
             menu.sort_no
+    </sql>
+    <sql id="modulesAllColumn">
+        modules.id as modulesId,
+        modules.name as modulesName,
+        modules.code as modulesCode,
+        modules.is_enable as modulesISEnable,
+        modules.menu_id as modulesMenuId,
+        modules.remark as modulesRemark,
+        modules.url as modulesUrl,
+        modules.is_delete as modulesIsDelete,
+        modules.create_time as modulesCreateTime,
+        modules.sort_no as modulesSortNo
     </sql>
 
     <select id="selectMenu" resultType="com.sg.bjftviewprotect.system.entity.Menu">
@@ -53,12 +84,15 @@
     </select>
     <select id="selectAllByType" resultMap="menuWithMenuModules">
         select <include refid="menuAllColumn"/>
+            ,
+            <include refid="modulesAllColumn"/>
             from t_menu menu
+        left join t_menu_modules modules on menu.id = modules.menu_id
         <where>
             <if test="type != null and type == 1">
                 menu.type = #{type}
             </if>
         </where>
-        order by menu.type,menu.sort_no
+        order by menu.type,menu.sort_no,modules.sort_no
     </select>
 </mapper>

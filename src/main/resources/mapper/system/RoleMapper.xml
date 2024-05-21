@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sg.bjftviewprotect.system.mapper.RoleMapper">
-
+    <!-- 这种会分页问题   -->
     <resultMap id="roleWithMenuResultMap" type="com.sg.bjftviewprotect.system.entity.Role">
         <id property="id" column="id" />
-        <collection property="menus" javaType="java.util.List" column="id" fetchType="eager"
-                    select="com.sg.bjftviewprotect.system.mapper.RoleMenuMapper.selectRoleMenu">
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="isEnable" column="is_enable"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="remark" column="remark"/>
+        <collection property="menus" javaType="java.util.List" ofType="com.sg.bjftviewprotect.system.entity.Menu" fetchType="eager">
+            <id property="id" column="menuId"/>
+            <result property="name" column="menuName"/>
+            <result property="code" column="menuCode"/>
+            <result property="isEnable" column="menuIsEnable"/>
+            <result property="isDelete" column="menuIsDelete"/>
+            <result property="type" column="menuType"/>
+            <result property="remark" column="menuRemark"/>
+            <result property="createTime" column="menuCreateTime"/>
+            <result property="url" column="menuUrl"/>
+            <result property="sortNo" column="menuSortNo"/>
         </collection>
     </resultMap>
 

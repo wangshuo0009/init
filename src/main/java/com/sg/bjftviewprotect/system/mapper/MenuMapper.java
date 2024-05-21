@@ -22,5 +22,9 @@ public interface MenuMapper extends BaseMapper<Menu> {
 
     Page<Menu> selectMenu(@Param("page") Page<Menu> page, @Param("menuRequest") MenuRequest menuRequest, @Param("roleChildIds") List<String> roleChildIds);
 
+    /**
+     * 菜单信息
+     * type 为 2，即为管理系统，可以拿到所有
+     */
     List<Menu> selectAllByType(@Param("type") Integer type);
 }

@@ -60,4 +60,8 @@ public class MenuModules implements Serializable {
     @Schema(description = "创建时间")
     @TableField("create_time")
     private Date createTime;
+
+    @Schema(description = "排序")
+    @TableField("sort_no")
+    private Integer sortNo;
 }
