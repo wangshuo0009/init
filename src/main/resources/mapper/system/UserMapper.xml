@@ -3,6 +3,7 @@
 <mapper namespace="com.sg.bjftviewprotect.system.mapper.UserMapper">
 
     <resultMap id="userWithRolesResultMap" type="com.sg.bjftviewprotect.system.entity.User">
+        <id property="id" column="id" />
         <collection property="roles" javaType="java.util.List" column="id" fetchType="eager"
                     select="com.sg.bjftviewprotect.system.mapper.UserRoleMapper.selectUserRole">
         </collection>

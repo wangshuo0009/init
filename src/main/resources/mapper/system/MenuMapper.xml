@@ -3,6 +3,7 @@
 <mapper namespace="com.sg.bjftviewprotect.system.mapper.MenuMapper">
 
     <resultMap id="menuWithMenuModules" type="com.sg.bjftviewprotect.system.entity.Menu">
+        <id property="id" column="id" />
         <collection property="menuModules" ofType="com.sg.bjftviewprotect.system.entity.MenuModules" javaType="java.util.List"
                     column="id" select="com.sg.bjftviewprotect.system.mapper.MenuModulesMapper.selectByMenuId">
         </collection>
@@ -16,7 +17,8 @@
             menu.is_delete,
             menu.remark,
             menu.type,
-            menu.url
+            menu.url,
+            menu.sort_no
     </sql>
 
     <select id="selectMenu" resultType="com.sg.bjftviewprotect.system.entity.Menu">
@@ -24,7 +26,9 @@
         DISTINCT
             <include refid="menuAllColumn"/>
             from t_menu menu
-            inner join t_role_menu rm on menu.id = rm.menu_id
+            <if test="roleChildIds != null and !roleChildIds.isEmpty()">
+                inner join t_role_menu rm on menu.id = rm.menu_id
+            </if>
         <where>
             menu.is_delete = 0
             <if test="menuRequest.id != null and menuRequest.id != '' and menuRequest.id.length > 0">
@@ -55,6 +59,6 @@
                 menu.type = #{type}
             </if>
         </where>
-        order by menu.sort_no
+        order by menu.type,menu.sort_no
     </select>
 </mapper>
