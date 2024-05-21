@@ -44,7 +44,7 @@ knife4j:
     enable-host-text: 127.0.0.1:8000
     enable-home-custom: false
     home-custom-path:
-    enable-search: false
+    enable-search: true #是否开启Ui界面中的搜索框
     enable-footer: false
     enable-footer-custom: true
     footer-custom-content: Apache License 2.0 | Copyright  2019-[浙江八一菜刀股份有限公司](https://gitee.com/xiaoym/knife4j)
