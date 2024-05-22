@@ -42,4 +42,8 @@ public class RegionalIntroduction implements Serializable {
     @Schema(description = "是否删除 1已删除 0未删除")
     @TableField("is_delete")
     private Integer isDelete;
+
+    @Schema(description = "图片路径")
+    @TableField("image_path")
+    private Integer imagePath;
 }

@@ -10,6 +10,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
     @ExceptionHandler(NotLoggedInException.class)
     public ResponseEntity<String> handleNotLoggedIn(NotLoggedInException e) {
-        return new ResponseEntity<>(e.getMessage(),HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
     }
+    /**
+     * 返回登陆页面
+     */
+    //@ExceptionHandler(NotLoggedInException.class)
+    //public ModelAndView handleNotLoggedIn(NotLoggedInException e) {
+    //    ModelAndView modelAndView = new ModelAndView();
+    //    modelAndView.addObject("errorMessage", e.getMessage());
+    //    modelAndView.setViewName("redirect:/index.html");
+    //    return modelAndView;
+    //}
 }

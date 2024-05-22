@@ -2,7 +2,7 @@ package com.sg.bjftviewprotect.system.util;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.read.builder.ExcelReaderSheetBuilder;
-import com.sg.bjftviewprotect.system.excel.DynamicExcelDataListener;
+import com.sg.bjftviewprotect.system.listener.DynamicExcelDataListener;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
