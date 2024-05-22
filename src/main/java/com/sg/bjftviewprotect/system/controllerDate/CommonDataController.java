@@ -38,10 +38,10 @@ public class CommonDataController {
 
     @Operation(summary = "用户档案信息新增接口",
             tags = "用户档案",
-            description = "仅支持新增\n" +
-                    "此接口仅支持单个sheet操作，多个有时间后期再改\n" +
-                    "支持多文件上传，文件要录入的的列索引必须保持一直\n" +
-                    "插入的column 没列，必须对应类的属性名，不在类的列可以写column1，column2等等代替，空白列也要写，用','英文逗号拼接 ")
+            description = "仅支持新增," +
+                    "此接口仅支持单个sheet操作，多个有时间后期再改," +
+                    "支持多文件上传，文件要录入的的列索引必须保持一直," +
+                    "插入的column 每列，必须对应类的属性名，不在类的列可以写column1，column2等等代替，空白列也要写，用','英文逗号拼接 ")
     @PostMapping("/savePowerUserInfoExcel")
     public Result<?> savePowerUserInfoExcel(List<MultipartFile> file,
                                     String[] columns,

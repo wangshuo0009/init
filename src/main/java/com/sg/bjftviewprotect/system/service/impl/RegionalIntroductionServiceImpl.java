@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sg.bjftviewprotect.system.common.Result;
+import com.sg.bjftviewprotect.system.constant.CommonConstant;
 import com.sg.bjftviewprotect.system.entity.RegionalIntroduction;
 import com.sg.bjftviewprotect.system.mapper.RegionalIntroductionMapper;
 import com.sg.bjftviewprotect.system.request.RegionalIntroductionRequest;
@@ -39,7 +40,7 @@ public class RegionalIntroductionServiceImpl extends ServiceImpl<RegionalIntrodu
         }};
         if (StringUtils.isBlank(regionalIntroductionRequest.getId())){
             regionalIntroduction.setCreateTime(LocalDateTime.now());
-            regionalIntroduction.setIsDelete(0);
+            regionalIntroduction.setIsDelete(CommonConstant.NOT_DELETE);
             regionalIntroductionMapper.delete(new LambdaQueryWrapper<>());
             regionalIntroductionMapper.insert(regionalIntroduction);
         } else {
