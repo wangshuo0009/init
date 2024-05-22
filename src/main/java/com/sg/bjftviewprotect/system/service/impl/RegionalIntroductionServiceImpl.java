@@ -8,7 +8,7 @@ import com.sg.bjftviewprotect.system.entity.RegionalIntroduction;
 import com.sg.bjftviewprotect.system.mapper.RegionalIntroductionMapper;
 import com.sg.bjftviewprotect.system.request.RegionalIntroductionRequest;
 import com.sg.bjftviewprotect.system.service.RegionalIntroductionService;
-import com.sg.bjftviewprotect.system.util.ImagesUtils;
+import com.sg.bjftviewprotect.system.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,10 +31,7 @@ public class RegionalIntroductionServiceImpl extends ServiceImpl<RegionalIntrodu
     private RegionalIntroductionMapper regionalIntroductionMapper;
     @Override
     public Result<?> saveOrUpdateRegionalIntroduction(RegionalIntroductionRequest regionalIntroductionRequest) {
-        String imageToBase64 = ImagesUtils.imageToBase64(regionalIntroductionRequest.getImages());
-        if (StringUtils.isBlank(imageToBase64)) {
-            return Result.fail("插入失败，图片异常");
-        }
+        String imageToBase64 = FileUtils.fileToBase64(regionalIntroductionRequest.getImages());
         RegionalIntroduction regionalIntroduction = new RegionalIntroduction() {{
             setId(regionalIntroductionRequest.getId());
             setIntroduction(regionalIntroductionRequest.getIntroduction());
