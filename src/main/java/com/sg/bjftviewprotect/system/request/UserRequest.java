@@ -20,7 +20,7 @@ public class UserRequest {
     private String id;
 
     @Schema(description = "名字")
-    private String name;
+    private String username;
 
     @Schema(description = "帐号")
     private String account;

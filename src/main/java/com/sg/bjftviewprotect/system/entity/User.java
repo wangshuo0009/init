@@ -32,8 +32,8 @@ public class User implements Serializable {
     private String id;
 
     @Schema(description = "名字")
-    @TableField("name")
-    private String name;
+    @TableField("username")
+    private String username;
 
     @Schema(description = "帐号")
     @TableField("account")

@@ -12,7 +12,7 @@
 
     <sql id="userAllColumn">
         user.id,
-            user.name,
+            user.username,
             user.account,
             user.password,
             user.is_enable,
@@ -34,8 +34,8 @@
             <if test="userRequest.id != null and userRequest.id != '' and userRequest.id.length > 0">
                 and user.id = #{userRequest.id}
             </if>
-            <if test="userRequest.name != null and userRequest.name != '' and userRequest.name.length > 0">
-                and user.name like concat('%',#{userRequest.name},'%')
+            <if test="userRequest.username != null and userRequest.username != '' and userRequest.username.length > 0">
+                and user.username like concat('%',#{userRequest.username},'%')
             </if>
             <if test="userChildIds != null and !userChildIds.isEmpty()">
                 and user.id in
@@ -59,7 +59,7 @@
         WITH RECURSIVE Subordinates AS (
         SELECT
         id,
-        name,
+        username,
         parent_id
         FROM
         t_user
@@ -68,7 +68,7 @@
         UNION ALL
         SELECT
         t.id,
-        t.name,
+        t.username,
         t.parent_id
         FROM
         t_user t

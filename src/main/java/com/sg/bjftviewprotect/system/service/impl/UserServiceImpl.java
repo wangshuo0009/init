@@ -77,7 +77,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public Result<?> saveUser(UserRequest userRequest, String userId) {
         User user = new User() {{
-            setName(userRequest.getName());
+            setUsername(userRequest.getUsername());
             setPassword(StringUtils.isBlank(userRequest.getPassword()) ? null : MD5.create().digestHex(userRequest.getPassword()));
             setAccount(userRequest.getAccount());
             setRemark(userRequest.getRemark());
@@ -105,7 +105,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public Result<?> updateUser(UserRequest userRequest) {
         User user = new User() {{
             setId(userRequest.getId());
-            setName(userRequest.getName());
+            setUsername(userRequest.getUsername());
             setPassword(StringUtils.isBlank(userRequest.getPassword()) ? null : MD5.create().digestHex(userRequest.getPassword()));
             setAccount(userRequest.getAccount());
             setRemark(userRequest.getRemark());
