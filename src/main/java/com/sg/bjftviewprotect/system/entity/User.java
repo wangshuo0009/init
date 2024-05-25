@@ -61,6 +61,10 @@ public class User implements Serializable {
     @TableField("create_time")
     private LocalDateTime createTime;
 
+    @Schema(description = "角色id")
+    @TableField(exist = false)
+    private List<String> roleId;
+
     @Schema(description = "角色")
     @TableField(exist = false)
     private List<Role> roles;

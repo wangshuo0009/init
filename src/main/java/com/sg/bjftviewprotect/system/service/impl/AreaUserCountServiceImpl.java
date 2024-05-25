@@ -1,13 +1,14 @@
 package com.sg.bjftviewprotect.system.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.entity.AreaUserCount;
 import com.sg.bjftviewprotect.system.mapper.AreaUserCountMapper;
 import com.sg.bjftviewprotect.system.service.AreaUserCountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * <p>
@@ -25,8 +26,7 @@ public class AreaUserCountServiceImpl extends ServiceImpl<AreaUserCountMapper, A
     private AreaUserCountMapper areaUserCountMapper;
 
     @Override
-    public Result<?> searchAreaUserCount() {
-        areaUserCountMapper.selectAreaUserCount();
-        return null;
+    public List<AreaUserCount> searchAreaUserCount() {
+        return areaUserCountMapper.selectAreaUserCount();
     }
 }

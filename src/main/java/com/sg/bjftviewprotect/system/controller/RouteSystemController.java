@@ -25,7 +25,8 @@ public class RouteSystemController {
     @Operation(summary = "后台管理菜单路由", description = "1是数据管理，2是系统管理路由\t包含某个页面下的小模块")
     @GetMapping("/managerSystem")
     public Result<?> managerSystem() {
-        return menuService.searchAllByType(CommonConstant.MANAGER_SYSTEM_TYPE_CODE);
+        Object o = menuService.searchAllByType(CommonConstant.MANAGER_SYSTEM_TYPE_CODE);
+        return Result.success("查询成功", o);
     }
 
 

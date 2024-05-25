@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sg.bjftviewprotect.system.mapper.AreaLoadCountMapper">
+
+
+    <sql id="allAreaLoadCountColumn">
+        alc.id,
+        alc.name,
+        alc.statistic_time,
+        alc.power_load,
+        alc.create_time
+    </sql>
+    <select id="selectAreaLoadCount" resultType="com.sg.bjftviewprotect.system.entity.AreaLoadCount">
+        select <include refid="allAreaLoadCountColumn"/>
+        from t_area_load_count alc
+        <where>
+            <if test="areaLoadCountRequest.id != null and areaLoadCountRequest.id != '' and areaLoadCountRequest.id.length > 0">
+                and alc.id = #{areaLoadCountRequest.id}
+            </if>
+            <if test="areaLoadCountRequest.name != null and areaLoadCountRequest.name != '' and areaLoadCountRequest.name.length > 0">
+                and alc.name like concat('%',#{areaLoadCountRequest.name},'%')
+            </if>
+            <if test="areaLoadCountRequest.statisticTime != null and areaLoadCountRequest.statisticTime != '' and areaLoadCountRequest.statisticTime.length > 0">
+                and DATE_FORMAT(alc.statistic_time,'%Y-%m') = DATE_FORMAT(STR_TO_DATE(#{areaLoadCountRequest.statisticTime}, '%Y-%m-%d'),'%Y-%m')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectAreaLoadCountForView" resultType="com.sg.bjftviewprotect.system.entity.AreaLoadCount">
+        select <include refid="allAreaLoadCountColumn"/>
+        from t_area_load_count alc
+    </select>
+</mapper>

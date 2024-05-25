@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.constant.CommonConstant;
 import com.sg.bjftviewprotect.system.entity.Role;
 import com.sg.bjftviewprotect.system.entity.RoleMenu;
@@ -42,14 +41,22 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     private RoleMenuService roleMenuService;
 
     @Override
-    public Result<?> searchRole(RoleRequest roleRequest, String userId) {
+    public Page<Role> searchRole(RoleRequest roleRequest, String userId) {
         List<String> roleChildIds = userRoleService.searchRoleChildIds(userId);
         Page<Role> page = new Page<>(roleRequest.getPageNum(),roleRequest.getPageSize());
-        return Result.success("查询成功",roleMapper.selectRole(page,roleRequest,roleChildIds));
+        roleMapper.selectRole(page,roleRequest,roleChildIds);
+        page.getRecords().forEach(role -> {
+            List<String> menuId = new ArrayList<>();
+            role.getMenus().forEach(menu -> {
+                    menuId.add(menu.getId());
+            });
+            role.setMenuId(menuId);
+        });
+        return page;
     }
 
     @Override
-    public Result<?> saveRole(RoleRequest roleRequest, String userId) {
+    public int saveRole(RoleRequest roleRequest, String userId) {
         Role role = new Role() {{
             setName(roleRequest.getName());
             setCode(roleRequest.getCode());
@@ -57,8 +64,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             setIsEnable(roleRequest.getIsEnable() == null ? 1 : roleRequest.getIsEnable());
             setIsDelete(CommonConstant.NOT_DELETE);
             setCreateTime(LocalDateTime.now());
+            setParentId(userId);
         }};
-        roleMapper.insert(role);
+        int insert = roleMapper.insert(role);
         // 新增完成后立即保存到该用户
         userRoleService.save(new UserRole(){{
             setRoleId(role.getId());
@@ -75,11 +83,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             }
             roleMenuService.saveBatch(roleMenus);
         }
-        return Result.success("新增成功");
+        return insert;
     }
 
     @Override
-    public Result<?> updateRole(RoleRequest roleRequest) {
+    public int updateRole(RoleRequest roleRequest) {
         Role role = new Role() {{
             setId(roleRequest.getId());
             setName(roleRequest.getName());
@@ -87,22 +95,21 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             setRemark(roleRequest.getRemark());
             setIsEnable(roleRequest.getIsEnable());
         }};
-        roleMapper.updateById(role);
         if (!ObjectUtils.isEmpty(roleRequest.getMenuId())){
             List<String> menuIdList = roleRequest.getMenuId();
             List<RoleMenu> roleMenus = new ArrayList<>();
-            roleMenuService.remove(new LambdaQueryWrapper<RoleMenu>().eq(RoleMenu::getRoleId, roleRequest.getId()));
             for (String menuId : menuIdList){
                 roleMenus.add(new RoleMenu(){{
                     setRoleId(role.getId());
                     setMenuId(menuId);
                 }});
             }
+            roleMenuService.remove(new LambdaQueryWrapper<RoleMenu>().eq(RoleMenu::getRoleId, roleRequest.getId()));
             roleMenuService.saveBatch(roleMenus);
         } else {
             roleMenuService.remove(new LambdaQueryWrapper<RoleMenu>().eq(RoleMenu::getRoleId, roleRequest.getId()));
         }
-        return Result.success("更新成功");
+        return roleMapper.updateById(role);
     }
 
 

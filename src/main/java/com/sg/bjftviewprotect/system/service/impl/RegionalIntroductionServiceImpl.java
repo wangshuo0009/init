@@ -3,7 +3,6 @@ package com.sg.bjftviewprotect.system.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.constant.CommonConstant;
 import com.sg.bjftviewprotect.system.entity.RegionalIntroduction;
 import com.sg.bjftviewprotect.system.mapper.RegionalIntroductionMapper;
@@ -31,7 +30,8 @@ public class RegionalIntroductionServiceImpl extends ServiceImpl<RegionalIntrodu
     @Autowired
     private RegionalIntroductionMapper regionalIntroductionMapper;
     @Override
-    public Result<?> saveOrUpdateRegionalIntroduction(RegionalIntroductionRequest regionalIntroductionRequest) {
+    public int saveOrUpdateRegionalIntroduction(RegionalIntroductionRequest regionalIntroductionRequest) {
+        int result;
         String imageToBase64 = FileUtils.fileToBase64(regionalIntroductionRequest.getImages());
         RegionalIntroduction regionalIntroduction = new RegionalIntroduction() {{
             setId(regionalIntroductionRequest.getId());
@@ -42,10 +42,10 @@ public class RegionalIntroductionServiceImpl extends ServiceImpl<RegionalIntrodu
             regionalIntroduction.setCreateTime(LocalDateTime.now());
             regionalIntroduction.setIsDelete(CommonConstant.NOT_DELETE);
             regionalIntroductionMapper.delete(new LambdaQueryWrapper<>());
-            regionalIntroductionMapper.insert(regionalIntroduction);
+            result = regionalIntroductionMapper.insert(regionalIntroduction);
         } else {
-            regionalIntroductionMapper.updateById(regionalIntroduction);
+            result = regionalIntroductionMapper.updateById(regionalIntroduction);
         }
-        return Result.success("操作成功");
+        return result;
     }
 }

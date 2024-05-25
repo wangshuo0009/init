@@ -25,7 +25,8 @@ public class RouteController {
     @Operation(summary = "三维菜单路由信息查询", description = "包含某个页面下的小模块")
     @GetMapping("/threeDimensional")
     public Result<?> threeDimensional() {
-        return menuService.searchAllByType(CommonConstant.THREE_DIMENSIONAL_TYPE_CODE);
+        Object o = menuService.searchAllByType(CommonConstant.THREE_DIMENSIONAL_TYPE_CODE);
+        return Result.success("查询成功", o);
     }
 
 }

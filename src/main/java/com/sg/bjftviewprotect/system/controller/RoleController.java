@@ -43,30 +43,36 @@ public class RoleController {
 
     @Operation(summary = "用户管理-新增用户角色列表", tags = "用户管理")
     @GetMapping("/searchRole")
-    public Result<?> searchRole(@CookieValue(value = CommonConstant.X_USER_ID) String userId) {
+    //public Result<?> searchRole(@CookieValue(value = CommonConstant.X_USER_ID) String userId) {
+    public Result<?> searchRole(@RequestHeader(value = CommonConstant.X_USER_ID) String userId) {
         RoleRequest roleRequest = PageUtil.pageForList(new RoleRequest());
-        return roleService.searchRole(roleRequest,userId);
+        Page<Role> page = roleService.searchRole(roleRequest, userId);
+        return Result.success("查询成功", page);
     }
 
 
     @Operation(summary = "查询角色信息")
     @PostMapping("/searchRole")
     public Result<?> searchRole(@RequestBody RoleRequest roleRequest,
-                                @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
+                                //@CookieValue(value = CommonConstant.X_USER_ID) String userId) {
+                                @RequestHeader(value = CommonConstant.X_USER_ID) String userId) {
         PageUtil.initPage(roleRequest);
-        return roleService.searchRole(roleRequest,userId);
+        Page<Role> page = roleService.searchRole(roleRequest, userId);
+        return Result.success("查询成功", page);
     }
 
     @Operation(summary = "新增角色信息")
     @PostMapping("/saveRole")
     public Result<?> saveRole(@RequestBody RoleRequest roleRequest,
-                              @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
+                              //@CookieValue(value = CommonConstant.X_USER_ID) String userId) {
+                              @RequestHeader(value = CommonConstant.X_USER_ID) String userId) {
         try {
             parameterValidation(roleRequest);
         }catch (Exception e){
             return Result.fail(e.getMessage());
         }
-        return roleService.saveRole(roleRequest, userId);
+        int insert = roleService.saveRole(roleRequest, userId);
+        return Result.success("新增成功", insert);
     }
 
     /**
@@ -80,7 +86,8 @@ public class RoleController {
         }catch (Exception e){
             return Result.fail(e.getMessage());
         }
-        return roleService.updateRole(roleRequest);
+        int i = roleService.updateRole(roleRequest);
+        return Result.success("操作成功",i);
     }
 
 
@@ -103,8 +110,10 @@ public class RoleController {
         if (StringUtils.isBlank(request.getCode())) {
             throw new RuntimeException("编码不能为空");
         }
-        Role one = roleService.getOne(new LambdaQueryWrapper<Role>().eq(Role::getCode, request.getCode()),false);
-        if (!ObjectUtils.isEmpty(one)) {
+        Role one = roleService.getOne(new LambdaQueryWrapper<Role>()
+                .ne(StringUtils.isNotBlank(request.getId()), Role::getId, request.getId())
+                .eq(Role::getCode, request.getCode()),false);
+        if (!ObjectUtils.isEmpty(one) && StringUtils.equals(one.getCode(),request.getCode())) {
             throw new RuntimeException("编码重复");
         }
     }

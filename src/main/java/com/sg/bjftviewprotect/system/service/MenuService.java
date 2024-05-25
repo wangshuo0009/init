@@ -1,7 +1,7 @@
 package com.sg.bjftviewprotect.system.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.entity.Menu;
 import com.sg.bjftviewprotect.system.request.MenuRequest;
 
@@ -15,7 +15,7 @@ import com.sg.bjftviewprotect.system.request.MenuRequest;
  */
 public interface MenuService extends IService<Menu> {
 
-    Result<?> searchMenu(MenuRequest menuRequest, String roleChildIds);
+    Page<Menu> searchMenu(MenuRequest menuRequest, String roleChildIds);
 
-    Result<?> searchAllByType(Integer type);
+    Object searchAllByType(Integer type);
 }

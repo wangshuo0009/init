@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.constant.CommonConstant;
 import com.sg.bjftviewprotect.system.entity.Role;
 import com.sg.bjftviewprotect.system.entity.User;
@@ -21,7 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -43,7 +44,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private RoleService roleService;
 
     @Override
-    public Result<?> searchUser(UserRequest userRequest, String userId) {
+    public Page<User> searchUser(UserRequest userRequest, String userId) {
         Page<User> page = new Page<>(userRequest.getPageNum(),userRequest.getPageSize());
         List<String> userChildIds = userMapper.selectUserChildIds(userId);
         Page<User> userPage = userMapper.selectAllUser(page, userRequest, userChildIds);
@@ -64,18 +65,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             userPage.getRecords().forEach(user -> {
                 List<UserRole> userRoles = userRoleMap.get(user.getId());
                 if (!userRoles.isEmpty()) {
+                    List<String> roleId = new ArrayList<>();
                     user.setRoles(userRoles.stream()
-                            .map(userRole -> roleMap.get(userRole.getRoleId()))
+                            .map(userRole -> {
+                                roleId.add(userRole.getRoleId());
+                                return roleMap.get(userRole.getRoleId());
+                            })
                             .collect(Collectors.toList())
                     );
+
+                    user.setRoleId(roleId);
+
                 }
             });
         }
-        return Result.success("查询成功", userPage);
+        return userPage;
     }
 
     @Override
-    public Result<?> saveUser(UserRequest userRequest, String userId) {
+    public int saveUser(UserRequest userRequest, String userId) {
         User user = new User() {{
             setUsername(userRequest.getUsername());
             setPassword(StringUtils.isBlank(userRequest.getPassword()) ? null : MD5.create().digestHex(userRequest.getPassword()));
@@ -86,7 +94,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             setParentId(userId);
             setCreateTime(LocalDateTime.now());
         }};
-        userMapper.insert(user);
+        int insert = userMapper.insert(user);
         if (!ObjectUtils.isEmpty(userRequest.getRoleId())){
             List<String> roleIdList = userRequest.getRoleId();
             List<UserRole> userRoles = new ArrayList<>();
@@ -98,11 +106,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             }
             userRoleService.saveBatch(userRoles);
         }
-        return Result.success("新增成功");
+        return insert;
     }
 
     @Override
-    public Result<?> updateUser(UserRequest userRequest) {
+    public int updateUser(UserRequest userRequest) {
         User user = new User() {{
             setId(userRequest.getId());
             setUsername(userRequest.getUsername());
@@ -111,22 +119,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             setRemark(userRequest.getRemark());
             setIsEnable(userRequest.getIsEnable());
         }};
-        userMapper.updateById(user);
         if (!ObjectUtils.isEmpty(userRequest.getRoleId())){
             List<String> roleIdList = userRequest.getRoleId();
             List<UserRole> userRoles = new ArrayList<>();
             // 移除当前用户角色中间表信息
-            userRoleService.remove(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, user.getId()));
             for (String roleId : roleIdList){
                 userRoles.add(new UserRole(){{
                     setUserId(user.getId());
                     setRoleId(roleId);
                 }});
             }
+            userRoleService.remove(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, user.getId()));
             userRoleService.saveBatch(userRoles);
         } else {
             userRoleService.remove(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, user.getId()));
         }
-        return Result.success("更新成功");
+        return userMapper.updateById(user);
     }
 }

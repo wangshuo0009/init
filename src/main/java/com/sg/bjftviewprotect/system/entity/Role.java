@@ -65,5 +65,9 @@ public class Role implements Serializable {
 
     @Schema(description = "菜单")
     @TableField(exist = false)
+    private List<String> menuId;
+
+    @Schema(description = "菜单")
+    @TableField(exist = false)
     private List<Menu> menus;
 }

@@ -1,6 +1,9 @@
 package com.sg.bjftviewprotect.system.config;
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;
+
+import static org.springframework.web.cors.CorsConfiguration.ALL;
 
 /**
  * @ClassName WebMvcConfig
@@ -8,13 +11,15 @@ import org.springframework.web.servlet.config.annotation.*;
  * @Date 2024/5/21 11:57
  * @Version 1.0
  **/
-public class WebMvcConfig extends WebMvcConfigurerAdapter {
+@Configuration
+public class WebMvcConfig implements WebMvcConfigurer {
     /**
      * 拦截器配置
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        super.addInterceptors(registry);
+        //registry.addInterceptor(new GlobalInterceptor()).addPathPatterns("/**");
+        //super.addInterceptors(registry);
     }
 
     /**
@@ -22,8 +27,9 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/static/");
+        // 配置会导致 knife4j 文档无法使用，不需要配置
+        //registry.addResourceHandler("/**")
+        //        .addResourceLocations("classpath:/static/");
     }
 
     /**
@@ -32,10 +38,11 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(true)
+                //.allowedOrigins("http://localhost:8081")  // allowCredentials(true) 为ture时 要设置允许跨域 不能用户这个 * .allowedOrigins(ALL)
+                .allowedOriginPatterns(ALL)  // 用这个
+                .allowedMethods(ALL)
+                .allowedHeaders(ALL)
+                .allowCredentials(true) // 允许携带凭证
                 .maxAge(3600);
     }
 

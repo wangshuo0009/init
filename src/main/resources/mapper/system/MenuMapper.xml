@@ -12,7 +12,8 @@
         <result property="remark" column="remark"/>
         <result property="createTime" column="createTime"/>
         <result property="url" column="url"/>
-        <result property="sortNo" column="sortNo"/>
+        <result property="sortNo" column="sort_no"/>
+        <result property="threeViewUrl" column="three_view_url"/>
         <collection property="menuModules" ofType="com.sg.bjftviewprotect.system.entity.MenuModules" javaType="java.util.List">
             <id property="id" column="modulesId"/>
             <result property="name" column="modulesName"/>
@@ -24,6 +25,7 @@
             <result property="isDelete" column="modulesIsDelete"/>
             <result property="createTime" column="modulesCreateTime"/>
             <result property="sortNo" column="modulesSortNo"/>
+            <result property="threeViewUrl" column="modulesThreeViewUrl"/>
         </collection>
     </resultMap>
 
@@ -37,7 +39,8 @@
             menu.remark,
             menu.create_time,
             menu.url,
-            menu.sort_no
+            menu.sort_no,
+            menu.three_view_url
     </sql>
     <sql id="modulesAllColumn">
         modules.id as modulesId,
@@ -49,7 +52,8 @@
         modules.url as modulesUrl,
         modules.is_delete as modulesIsDelete,
         modules.create_time as modulesCreateTime,
-        modules.sort_no as modulesSortNo
+        modules.sort_no as modulesSortNo,
+        modules.three_view_url as modulesThreeViewUrl
     </sql>
 
     <select id="selectMenu" resultType="com.sg.bjftviewprotect.system.entity.Menu">

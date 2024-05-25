@@ -64,4 +64,8 @@ public class MenuModules implements Serializable {
     @Schema(description = "排序")
     @TableField("sort_no")
     private Integer sortNo;
+
+    @Schema(description = "三维路由")
+    @TableField("three_view_url")
+    private String threeViewUrl;
 }

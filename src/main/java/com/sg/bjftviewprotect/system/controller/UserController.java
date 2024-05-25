@@ -3,6 +3,7 @@ package com.sg.bjftviewprotect.system.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sg.bjftviewprotect.system.annotation.LoginVerification;
 import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.constant.CommonConstant;
@@ -38,9 +39,11 @@ public class UserController {
     @Operation(summary = "查询用户信息")
     @PostMapping("/searchUser")
     public Result<?> searchUser(@RequestBody UserRequest userRequest,
-                                @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
+                                //@CookieValue(value = CommonConstant.X_USER_ID) String userId) {
+                                @RequestHeader(value = CommonConstant.X_USER_ID) String userId) {
         PageUtil.initPage(userRequest);
-        return userService.searchUser(userRequest, userId);
+        Page<User> page = userService.searchUser(userRequest, userId);
+        return Result.success("查询成功", page);
     }
 
     /**
@@ -49,14 +52,16 @@ public class UserController {
     @Operation(summary = "新增用户信息")
     @PostMapping("/saveUser")
     public Result<?> saveUser(@RequestBody UserRequest userRequest,
-                              @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
+                              //@CookieValue(value = CommonConstant.X_USER_ID) String userId) {
+                              @RequestHeader(value = CommonConstant.X_USER_ID) String userId) {
         // 参数验证
         try {
             parameterValidation(userRequest);
         }catch (Exception e){
             return Result.fail(e.getMessage());
         }
-        return userService.saveUser(userRequest, userId);
+        int i = userService.saveUser(userRequest, userId);
+        return Result.success("操作成功",i);
     }
 
     /**
@@ -71,7 +76,8 @@ public class UserController {
         }catch (Exception e){
             return Result.fail(e.getMessage());
         }
-        return userService.updateUser(userRequest);
+        int i = userService.updateUser(userRequest);
+        return Result.success("操作成功",i);
     }
 
 
@@ -93,7 +99,9 @@ public class UserController {
         if (StringUtils.isBlank(request.getAccount())) {
             throw new RuntimeException("帐号不能为空");
         }
-        User one = userService.getOne(new LambdaQueryWrapper<User>().eq(User::getAccount, request.getAccount()),false);
+        User one = userService.getOne(new LambdaQueryWrapper<User>()
+                .ne(StringUtils.isNotBlank(request.getId()), User::getId, request.getId())
+                .eq(User::getAccount, request.getAccount()),false);
         if (!ObjectUtils.isEmpty(one)) {
             throw new RuntimeException("帐号重复");
         }

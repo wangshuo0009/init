@@ -1,6 +1,6 @@
 package com.sg.bjftviewprotect.system.service;
 
-import com.sg.bjftviewprotect.system.common.Result;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sg.bjftviewprotect.system.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sg.bjftviewprotect.system.request.UserRequest;
@@ -14,9 +14,9 @@ import com.sg.bjftviewprotect.system.request.UserRequest;
  * @since 2024/05/09 13:31:56
  */
 public interface UserService extends IService<User> {
-    Result<?> searchUser(UserRequest userRequest, String userId);
+    Page<User> searchUser(UserRequest userRequest, String userId);
 
-    Result<?> saveUser(UserRequest userRequest, String userId);
+    int saveUser(UserRequest userRequest, String userId);
 
-    Result<?> updateUser(UserRequest userRequest);
+    int updateUser(UserRequest userRequest);
 }

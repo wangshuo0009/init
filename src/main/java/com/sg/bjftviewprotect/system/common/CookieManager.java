@@ -1,6 +1,11 @@
 package com.sg.bjftviewprotect.system.common;
 
-import javax.servlet.http.Cookie;
+import com.sg.bjftviewprotect.system.constant.CommonConstant;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.server.Cookie;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -11,17 +16,51 @@ import javax.servlet.http.HttpServletResponse;
  * @Version 1.0
  **/
 public class CookieManager {
+    @Value("")
+    private String cookieName;
     public static void setCookie(HttpServletRequest request, HttpServletResponse response, String account, String userId) {
         // 创建一个 Cookie 存储用户帐号
-        Cookie accountCookie = new Cookie("X-User-Account", account);
-        // 设置 Cookie 的路径，应用下任何界面都可以访问，可以根据需要进行调整
-        accountCookie.setPath("/");
-        // 将 Cookie 添加到响应中
-        response.addCookie(accountCookie);
+        ResponseCookie accountCookie = ResponseCookie.from(CommonConstant.X_USER_ACCOUNT, account)
+                //.maxAge(-1)               // 浏览器关闭，则删除 Cookie
+                .secure(false)                          // false 可以在 HTTP 协议中传输
+                .httpOnly(false)                        // true 的话Javascript 不能读写
+                //.domain("localhost")                    // 提交 cookie 的域
+                .path("/")                              // 提交 cookie 的path
+                .sameSite(Cookie.SameSite.NONE.attributeValue())    // 设置 SameSite 为 NONE
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE,accountCookie.toString());
 
-        // 创建一个 Cookie 存储用户ID
-        Cookie idCookie = new Cookie("X-User-ID", userId);
-        idCookie.setPath("/");
-        response.addCookie(idCookie);
+        ResponseCookie userIdCookie = ResponseCookie.from(CommonConstant.X_USER_ID, userId)
+                //.maxAge(-1)               // 浏览器关闭，则删除 Cookie
+                .secure(false)                          // false 可以在 HTTP 协议中传输
+                .httpOnly(false)                        // true 的话Javascript 不能读写
+                //.domain("localhost")                    // 提交 cookie 的域
+                .path("/")                              // 提交 cookie 的path
+                .sameSite(Cookie.SameSite.NONE.attributeValue())    // 设置 SameSite 为 NONE
+                .build();
+        // 将 Cookie 添加到响应中
+        response.addHeader(HttpHeaders.SET_COOKIE,userIdCookie.toString());
+
+        // 创建一个 Cookie 存储用户帐号
+        ResponseCookie accountCookie2 = ResponseCookie.from(CommonConstant.X_USER_ACCOUNT, account)
+                //.maxAge(-1)               // 浏览器关闭，则删除 Cookie
+                .secure(false)                          // false 可以在 HTTP 协议中传输
+                .httpOnly(false)                        // true 的话Javascript 不能读写
+                .domain(".ngrok.app")                    // 提交 cookie 的域
+                .path("/")                              // 提交 cookie 的path
+                .sameSite(Cookie.SameSite.NONE.attributeValue())    // 设置 SameSite 为 NONE
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE,accountCookie2.toString());
+
+        ResponseCookie userIdCookie2 = ResponseCookie.from(CommonConstant.X_USER_ID, userId)
+                //.maxAge(-1)               // 浏览器关闭，则删除 Cookie
+                .secure(false)                          // false 可以在 HTTP 协议中传输
+                .httpOnly(false)                        // true 的话Javascript 不能读写
+                .domain(".ngrok.app")                    // 提交 cookie 的域
+                .path("/")                              // 提交 cookie 的path
+                .sameSite(Cookie.SameSite.NONE.attributeValue())    // 设置 SameSite 为 NONE
+                .build();
+        // 将 Cookie 添加到响应中
+        response.addHeader(HttpHeaders.SET_COOKIE,userIdCookie2.toString());
     }
 }

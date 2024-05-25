@@ -5,19 +5,19 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sg.bjftviewprotect.system.common.CookieManager;
 import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.common.TokenManager;
+import com.sg.bjftviewprotect.system.constant.CommonConstant;
 import com.sg.bjftviewprotect.system.entity.User;
 import com.sg.bjftviewprotect.system.request.UserLoginRequest;
 import com.sg.bjftviewprotect.system.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -50,8 +50,11 @@ public class LoginController {
 
         CookieManager.setCookie(request, response, account, one.getId());
         TokenManager.setUserToken(request, account, token);
+        Map<String,String> map = new HashMap<>();
+        map.put(CommonConstant.X_USER_ID, one.getId());
+        map.put(CommonConstant.X_USER_ACCOUNT, one.getAccount());
 
-        return Result.success(200, "登陆成功", account, token);
+        return Result.success(200, "登陆成功", map, token);
     }
 
 

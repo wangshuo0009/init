@@ -3,6 +3,7 @@ package com.sg.bjftviewprotect.system.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sg.bjftviewprotect.system.annotation.LoginVerification;
 import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.constant.CommonConstant;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author wangshuo
@@ -32,18 +33,24 @@ import java.time.LocalDateTime;
 public class MenuController {
     @Autowired
     private MenuService menuService;
+
     @Operation(summary = "角色管理-绑定菜单列表", tags = "角色管理")
     @GetMapping("searchAllMenu")
-    public Result<?> searchAllMenu(@CookieValue(value = CommonConstant.X_USER_ID) String userId) {
+    //public Result<?> searchAllMenu(@CookieValue(value = CommonConstant.X_USER_ID) String userId) {
+    public Result<?> searchAllMenu(@RequestHeader(value = CommonConstant.X_USER_ID) String userId) {
         MenuRequest menuRequest = PageUtil.pageForList(new MenuRequest());
-        return menuService.searchMenu(menuRequest,userId);
+        Page<Menu> page = menuService.searchMenu(menuRequest, userId);
+        return Result.success("查询成功", page);
     }
 
     @Operation(summary = "查询菜单信息")
     @PostMapping("searchMenu")
     public Result<?> searchMenu(@RequestBody MenuRequest menuRequest,
-                                @CookieValue(value = CommonConstant.X_USER_ID) String userId) {
-        return menuService.searchMenu(menuRequest,userId);
+                                //@CookieValue(value = CommonConstant.X_USER_ID) String userId) {
+                                @RequestHeader(value = CommonConstant.X_USER_ID) String userId) {
+        PageUtil.initPage(menuRequest);
+        Page<Menu> page = menuService.searchMenu(menuRequest, userId);
+        return Result.success("查询成功", page);
     }
 
     @Operation(summary = "新增菜单")
@@ -51,10 +58,10 @@ public class MenuController {
     public Result<?> saveMenu(@RequestBody MenuRequest menuRequest) {
         try {
             parameterValidation(menuRequest);
-        }catch (Exception e){
+        } catch (Exception e) {
             return Result.fail(e.getMessage());
         }
-        Menu menu = new Menu(){{
+        Menu menu = new Menu() {{
             setName(menuRequest.getName());
             setUrl(menuRequest.getUrl());
             setCode(menuRequest.getCode());
@@ -73,10 +80,10 @@ public class MenuController {
     public Result<?> updateMenu(@RequestBody MenuRequest menuRequest) {
         try {
             parameterValidation(menuRequest);
-        }catch (Exception e){
+        } catch (Exception e) {
             return Result.fail(e.getMessage());
         }
-        Menu menu = new Menu(){{
+        Menu menu = new Menu() {{
             setId(menuRequest.getId());
             setName(menuRequest.getName());
             setUrl(menuRequest.getUrl());
@@ -95,8 +102,8 @@ public class MenuController {
      * 删除菜单
      */
     @Operation(summary = "删除菜单")
-    @DeleteMapping("/deleteMenu")
-    public Result<?> deleteMenu(@RequestParam("id") String id) {
+    @DeleteMapping("/deleteMenu/{id}")
+    public Result<?> deleteMenu(@PathVariable("id") String id) {
         menuService.removeById(id);
         return Result.success("删除成功");
     }
@@ -105,15 +112,17 @@ public class MenuController {
     /**
      * 参数验证
      */
-    public void parameterValidation(MenuRequest request){
+    public void parameterValidation(MenuRequest request) {
         if (StringUtils.isBlank(request.getCode())) {
             throw new RuntimeException("编码不能为空");
         }
         if (request.getType() == null) {
             throw new RuntimeException("类型不能为空");
         }
-        Menu one = menuService.getOne(new LambdaQueryWrapper<Menu>().eq(Menu::getCode, request.getCode()),false);
-        if (!ObjectUtils.isEmpty(one)) {
+        Menu one = menuService.getOne(new LambdaQueryWrapper<Menu>()
+                .ne(StringUtils.isNotBlank(request.getId()), Menu::getId, request.getId())
+                .eq(Menu::getCode, request.getCode()), false);
+        if (!ObjectUtils.isEmpty(one) && StringUtils.equals(one.getCode(),request.getCode())) {
             throw new RuntimeException("编码重复");
         }
     }

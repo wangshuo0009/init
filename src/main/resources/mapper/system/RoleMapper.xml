@@ -4,22 +4,26 @@
     <!-- 这种会分页问题   -->
     <resultMap id="roleWithMenuResultMap" type="com.sg.bjftviewprotect.system.entity.Role">
         <id property="id" column="id" />
-        <result property="name" column="name"/>
-        <result property="code" column="code"/>
-        <result property="isEnable" column="is_enable"/>
-        <result property="isDelete" column="is_delete"/>
-        <result property="remark" column="remark"/>
-        <collection property="menus" javaType="java.util.List" ofType="com.sg.bjftviewprotect.system.entity.Menu" fetchType="eager">
-            <id property="id" column="menuId"/>
-            <result property="name" column="menuName"/>
-            <result property="code" column="menuCode"/>
-            <result property="isEnable" column="menuIsEnable"/>
-            <result property="isDelete" column="menuIsDelete"/>
-            <result property="type" column="menuType"/>
-            <result property="remark" column="menuRemark"/>
-            <result property="createTime" column="menuCreateTime"/>
-            <result property="url" column="menuUrl"/>
-            <result property="sortNo" column="menuSortNo"/>
+<!--        <result property="name" column="name"/>-->
+<!--        <result property="code" column="code"/>-->
+<!--        <result property="isEnable" column="is_enable"/>-->
+<!--        <result property="isDelete" column="is_delete"/>-->
+<!--        <result property="remark" column="remark"/>-->
+<!--        <result property="permissionLevel" column="permission_level"/>-->
+<!--        <result property="parentId" column="parent_id"/>-->
+<!--        <result property="createTime" column="create_time"/>-->
+        <collection property="menus" javaType="java.util.List" ofType="com.sg.bjftviewprotect.system.entity.Menu" fetchType="eager"
+        column="id" select="com.sg.bjftviewprotect.system.mapper.RoleMenuMapper.selectRoleMenu">
+<!--            <id property="id" column="menuId"/>-->
+<!--            <result property="name" column="menuName"/>-->
+<!--            <result property="code" column="menuCode"/>-->
+<!--            <result property="isEnable" column="menuIsEnable"/>-->
+<!--            <result property="isDelete" column="menuIsDelete"/>-->
+<!--            <result property="type" column="menuType"/>-->
+<!--            <result property="remark" column="menuRemark"/>-->
+<!--            <result property="createTime" column="menuCreateTime"/>-->
+<!--            <result property="url" column="menuUrl"/>-->
+<!--            <result property="sortNo" column="menuSortNo"/>-->
         </collection>
     </resultMap>
 
@@ -29,11 +33,14 @@
             role.code,
             role.is_enable,
             role.is_delete,
-            role.remark
+            role.remark,
+            role.permission_level,
+            role.parent_id,
+            role.create_time
     </sql>
 
 
-    <select id="selectRole" resultType="com.sg.bjftviewprotect.system.entity.Role">
+    <select id="selectRole" resultMap="roleWithMenuResultMap">
         select <include refid="roleAllColumn"/>
         FROM t_role role
         <where>

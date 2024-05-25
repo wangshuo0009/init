@@ -33,6 +33,11 @@ public class MenuRequest {
     @Schema(description = "菜单路由")
     private String url;
 
+
+    @Schema(description = "三维路由")
+    @TableField("three_view_url")
+    private String threeViewUrl;
+
     @Schema(description = "排序")
     @TableField("sort_no")
     private Integer sortNo;

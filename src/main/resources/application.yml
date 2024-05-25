@@ -1,6 +1,15 @@
 server:
   port: 9000
 #  servlet:
+#    session:
+#      cookie:
+#        domain: minnow-renewing-foxhound.ngrok-free.app
+#        http-only: false
+#        path: /
+#        same-site: none
+#        secure: false
+
+#  servlet:
 #    context-path: 接口路径前缀
 spring:
   application:

@@ -6,10 +6,7 @@ import com.sg.bjftviewprotect.system.entity.AreaUserCount;
 import com.sg.bjftviewprotect.system.entity.PowerGridView;
 import com.sg.bjftviewprotect.system.entity.PowerUserInfo;
 import com.sg.bjftviewprotect.system.entity.RegionalIntroduction;
-import com.sg.bjftviewprotect.system.service.AreaUserCountService;
-import com.sg.bjftviewprotect.system.service.PowerGridViewService;
-import com.sg.bjftviewprotect.system.service.PowerUserService;
-import com.sg.bjftviewprotect.system.service.RegionalIntroductionService;
+import com.sg.bjftviewprotect.system.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +41,9 @@ public class OverviewController {
     private PowerGridViewService powerGridViewService;
     @Autowired
     private PowerUserService powerUserService;
+    @Autowired
+    private AreaLoadCountService areaLoadCountService;
+
     @Operation(summary = "北京丰台区域简介查询接口")
     @GetMapping("/regionalIntroduction")
     public Result<?> searchRegionalIntroduction() {
@@ -54,7 +54,7 @@ public class OverviewController {
     @Operation(summary = "区域负荷统计查询接口")
     @GetMapping("/areaLoadCount")
     public Result<?> areaLoadCount() {
-
+        //areaLoadCountService.searchAreaLoadCount()
         return Result.success("查询成功");
     }
 
@@ -65,10 +65,10 @@ public class OverviewController {
         Set<String> lowSet = new HashSet<>();
         List<PowerUserInfo> powerUserInfos = powerUserService.list();
         for (PowerUserInfo powerUserInfo : powerUserInfos) {
-            if (Objects.equals(powerUserInfo.getType(), CommonConstant.HIGH_VOLTAGE)){
+            if (Objects.equals(powerUserInfo.getType(), CommonConstant.HIGH_VOLTAGE)) {
                 // 算法不同，高压用户名会重复，根据名称筛选
                 highSet.add(powerUserInfo.getUsername());
-            } else if (Objects.equals(powerUserInfo.getType(), CommonConstant.LOW_VOLTAGE)){
+            } else if (Objects.equals(powerUserInfo.getType(), CommonConstant.LOW_VOLTAGE)) {
                 // 算法不同，低压用户名会重复，但是所属楼栋不同根据地址+名称筛选
                 lowSet.add(powerUserInfo.getAddress() + powerUserInfo.getUserCode());
             }
@@ -78,19 +78,18 @@ public class OverviewController {
         double lowUserNum = lowSet.size();
         List<AreaUserCount> areaUserCounts = areaUserCountService.list();
         areaUserCounts.forEach(areaUserCount -> {
-            if (areaUserCount.getName().contains("总")){
-                areaUserCount.setNum(areaUserCount.getNum());
+            if (areaUserCount.getName().contains("总用户")) {
+                areaUserCount.setNum((int) allUserNum);
                 areaUserCount.setRate(BigDecimal.valueOf(100).setScale(2, RoundingMode.HALF_UP));
-            } else if (areaUserCount.getName().contains("高")){
-                areaUserCount.setNum(areaUserCount.getNum());
+            } else if (areaUserCount.getName().contains("高压用户")) {
+                areaUserCount.setNum((int) highUserNum);
                 areaUserCount.setRate(BigDecimal.valueOf((highUserNum / allUserNum) * 100).setScale(2, RoundingMode.HALF_UP));
-            } else if (areaUserCount.getName().contains("低")){
-                areaUserCount.setNum(areaUserCount.getNum());
+            } else if (areaUserCount.getName().contains("低压用户")) {
+                areaUserCount.setNum((int) lowUserNum);
                 areaUserCount.setRate(BigDecimal.valueOf((lowUserNum / allUserNum) * 100).setScale(2, RoundingMode.HALF_UP));
-
             }
         });
-        return Result.success("查询成功",areaUserCounts);
+        return Result.success("查询成功", areaUserCounts);
     }
 
     @Operation(summary = "区域用电量统计查询接口")

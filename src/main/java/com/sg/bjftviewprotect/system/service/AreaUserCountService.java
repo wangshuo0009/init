@@ -1,8 +1,9 @@
 package com.sg.bjftviewprotect.system.service;
 
-import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.entity.AreaUserCount;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,5 +15,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface AreaUserCountService extends IService<AreaUserCount> {
 
-    Result<?> searchAreaUserCount();
+    List<AreaUserCount> searchAreaUserCount();
 }
