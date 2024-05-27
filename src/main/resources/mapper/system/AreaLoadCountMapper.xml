@@ -24,10 +24,25 @@
                 and DATE_FORMAT(alc.statistic_time,'%Y-%m') = DATE_FORMAT(STR_TO_DATE(#{areaLoadCountRequest.statisticTime}, '%Y-%m-%d'),'%Y-%m')
             </if>
         </where>
+        order by alc.statistic_time desc
     </select>
 
     <select id="selectAreaLoadCountForView" resultType="com.sg.bjftviewprotect.system.entity.AreaLoadCount">
-        select <include refid="allAreaLoadCountColumn"/>
-        from t_area_load_count alc
+        SELECT
+            date_format( statistic_time, '%Y-%m-01' ) AS statistic_time,
+            sum( power_load ) AS power_load
+        FROM
+            t_area_load_count
+        WHERE
+            (
+                statistic_time BETWEEN STR_TO_DATE( CONCAT( YEAR ( CURRENT_DATE ()), '-01-01' ), '%Y-%m-%d' )
+                    AND CURRENT_DATE ())
+           OR (
+            statistic_time BETWEEN STR_TO_DATE( CONCAT( YEAR ( CURRENT_DATE () - INTERVAL 1 YEAR ), '-01-01' ), '%Y-%m-%d' )
+                AND ( CURRENT_DATE () - INTERVAL 1 YEAR ))
+        GROUP BY
+            date_format( statistic_time, '%Y-%m-01' )
+        ORDER BY
+            statistic_time
     </select>
 </mapper>

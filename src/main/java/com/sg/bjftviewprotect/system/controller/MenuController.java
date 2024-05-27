@@ -9,6 +9,7 @@ import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.constant.CommonConstant;
 import com.sg.bjftviewprotect.system.entity.Menu;
 import com.sg.bjftviewprotect.system.request.MenuRequest;
+import com.sg.bjftviewprotect.system.service.MenuModulesService;
 import com.sg.bjftviewprotect.system.service.MenuService;
 import com.sg.bjftviewprotect.system.util.PageUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,6 +34,8 @@ import java.time.LocalDateTime;
 public class MenuController {
     @Autowired
     private MenuService menuService;
+    @Autowired
+    private MenuModulesService menuModulesService;
 
     @Operation(summary = "角色管理-绑定菜单列表", tags = "角色管理")
     @GetMapping("searchAllMenu")

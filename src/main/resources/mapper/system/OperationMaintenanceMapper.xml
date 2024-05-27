@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sg.bjftviewprotect.system.mapper.OperationMaintenanceMapper">
+
+    <sql id="allColumn">
+
+    </sql>
+
+
+    <select id="selectOperationMaintenance" resultType="com.sg.bjftviewprotect.system.entity.OperationMaintenance">
+        select *
+        from t_operation_maintenance
+        <where>
+            <if test="operationMaintenanceRequest.id != null and operationMaintenanceRequest.id != ''">
+                and id = #{operationMaintenanceRequest.id}
+            </if>
+            <if test="operationMaintenanceRequest.code != null">
+                and code = #{operationMaintenanceRequest.code}
+            </if>
+            <if test="operationMaintenanceRequest.type != null">
+                and type = #{operationMaintenanceRequest.type}
+            </if>
+            <if test="operationMaintenanceRequest.statisticTime != null and operationMaintenanceRequest.statisticTime != ''">
+                and date_format(statistic_time, '%Y-%m-01') = date_format(str_to_date(#{operationMaintenanceRequest.statisticTime},'%Y-%m-01'),'%Y-%m-01')
+            </if>
+        </where>
+        order by statistic_time desc
+    </select>
+
+    <select id="selectOperationMaintenanceForView"
+            resultType="com.sg.bjftviewprotect.system.entity.OperationMaintenance">
+        select *
+        from t_operation_maintenance
+        where type = #{type}
+        and
+        (
+        statistic_time BETWEEN STR_TO_DATE( CONCAT( YEAR ( CURRENT_DATE ()), '-01-01' ), '%Y-%m-%d' )
+        AND CURRENT_DATE ())
+        OR (
+        statistic_time BETWEEN STR_TO_DATE( CONCAT( YEAR ( CURRENT_DATE () - INTERVAL 1 YEAR ), '-01-01' ), '%Y-%m-%d' )
+        AND ( CURRENT_DATE () - INTERVAL 1 YEAR ))
+        order by statistic_time
+    </select>
+</mapper>

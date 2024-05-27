@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sg.bjftviewprotect.system.mapper.AreaElectricityCountMapper">
+    
+    <sql id="allColumn">
+        aec.id,
+        aec.name,
+        aec.electricity_usage,
+        aec.power_load,
+        aec.create_time
+    </sql>
+    <select id="selectAreaElectricityCount" resultType="com.sg.bjftviewprotect.system.entity.AreaElectricityCount">
+        select *
+        from t_area_electricity_count aec
+        <where>
+            <if test="areaElectricityCountRequest.id != null and areaElectricityCountRequest.id != ''">
+                and aec.id = #{areaElectricityCountRequest.id}
+            </if>
+            <if test="areaElectricityCountRequest.statisticTime != null and areaElectricityCountRequest.statisticTime != ''">
+                and date_format(aec.statistic_time, '%Y-%m-01') = date_format(str_to_date(#{areaElectricityCountRequest.statisticTime},'%Y-%m-01'),'%Y-%m-01')
+            </if>
+        </where>
+        order by aec.statistic_time desc
+    </select>
+
+
+    <select id="selectAreaElectricityCountForView" resultType="com.sg.bjftviewprotect.system.entity.AreaElectricityCount">
+        select
+            aec.name as name,
+            aec.electricity_usage,
+            date_format( aec.statistic_time, '%Y-%m-01' ) as statistic_time
+        from t_area_electricity_count aec
+        WHERE
+        (
+        statistic_time BETWEEN STR_TO_DATE( CONCAT( YEAR ( CURRENT_DATE ()), '-01-01' ), '%Y-%m-%d' )
+        AND CURRENT_DATE ())
+        OR (
+        statistic_time BETWEEN STR_TO_DATE( CONCAT( YEAR ( CURRENT_DATE () - INTERVAL 1 YEAR ), '-01-01' ), '%Y-%m-%d' )
+        AND ( CURRENT_DATE () - INTERVAL 1 YEAR ))
+        order by aec.statistic_time
+    </select>
+</mapper>

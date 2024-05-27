@@ -15,5 +15,6 @@ import java.util.List;
  */
 public interface AreaUserCountService extends IService<AreaUserCount> {
 
+    // 区域用户统计
     List<AreaUserCount> searchAreaUserCount();
 }

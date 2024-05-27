@@ -19,14 +19,14 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author wangshuo
- * @since 2024/05/24 10:47:39
+ * @since 2024/05/27 10:18:30
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("t_area_load_count")
-@Schema(name = "AreaLoadCount", description = "$!{table.comment}")
-public class AreaLoadCount implements Serializable {
+@TableName("t_area_electricity_count")
+@Schema(name = "AreaElectricityCount", description = "$!{table.comment}")
+public class AreaElectricityCount implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -43,12 +43,11 @@ public class AreaLoadCount implements Serializable {
     @TableField("statistic_time")
     private LocalDateTime statisticTime;
 
-    @Schema(description = "负荷，用电量")
-    @TableField("power_load")
-    private BigDecimal powerLoad;
+    @Schema(description = "区域用电量")
+    @TableField("electricity_usage")
+    private BigDecimal electricityUsage;
 
     @Schema(description = "创建时间")
     @TableField("create_time")
     private LocalDateTime createTime;
-
 }

@@ -10,7 +10,7 @@
         <result property="isDelete" column="is_delete"/>
         <result property="type" column="type"/>
         <result property="remark" column="remark"/>
-        <result property="createTime" column="createTime"/>
+        <result property="createTime" column="create_time"/>
         <result property="url" column="url"/>
         <result property="sortNo" column="sort_no"/>
         <result property="threeViewUrl" column="three_view_url"/>
@@ -26,6 +26,7 @@
             <result property="createTime" column="modulesCreateTime"/>
             <result property="sortNo" column="modulesSortNo"/>
             <result property="threeViewUrl" column="modulesThreeViewUrl"/>
+            <result property="componentType" column="modulesComponentType"/>
         </collection>
     </resultMap>
 
@@ -53,7 +54,8 @@
         modules.is_delete as modulesIsDelete,
         modules.create_time as modulesCreateTime,
         modules.sort_no as modulesSortNo,
-        modules.three_view_url as modulesThreeViewUrl
+        modules.three_view_url as modulesThreeViewUrl,
+        modules.component_type as modulesComponentType
     </sql>
 
     <select id="selectMenu" resultType="com.sg.bjftviewprotect.system.entity.Menu">

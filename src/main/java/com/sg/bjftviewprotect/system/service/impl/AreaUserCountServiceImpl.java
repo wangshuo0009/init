@@ -27,6 +27,6 @@ public class AreaUserCountServiceImpl extends ServiceImpl<AreaUserCountMapper, A
 
     @Override
     public List<AreaUserCount> searchAreaUserCount() {
-        return areaUserCountMapper.selectAreaUserCount();
+        return areaUserCountMapper.selectList(null);
     }
 }

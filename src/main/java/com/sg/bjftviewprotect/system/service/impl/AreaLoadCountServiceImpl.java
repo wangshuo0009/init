@@ -10,6 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * <p>
  *  服务实现类
@@ -30,8 +36,22 @@ public class AreaLoadCountServiceImpl extends ServiceImpl<AreaLoadCountMapper, A
     }
 
     @Override
-    public Page<AreaLoadCount> searchAreaLoadCount() {
-        //return areaLoadCountMapper.selectAreaLoadCount();
-        return null;
+    public Map<String, List<AreaLoadCount>> searchAreaLoadCountForView() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        List<AreaLoadCount> list = areaLoadCountMapper.selectAreaLoadCountForView();
+        List<AreaLoadCount> thisYear = new ArrayList<>();
+        List<AreaLoadCount> lastYear = new ArrayList<>();
+        for (AreaLoadCount areaLoadCount : list) {
+            if (areaLoadCount.getStatisticTime().getYear() == localDateTime.getYear()) {
+                thisYear.add(areaLoadCount);
+            } else {
+                lastYear.add(areaLoadCount);
+            }
+        }
+        Map<String, List<AreaLoadCount>> map = new HashMap<>();
+        map.put("thisYear", thisYear);
+        map.put("lastYear", lastYear);
+
+        return map;
     }
 }

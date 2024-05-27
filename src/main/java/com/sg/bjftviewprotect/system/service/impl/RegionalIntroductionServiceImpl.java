@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -29,6 +30,12 @@ public class RegionalIntroductionServiceImpl extends ServiceImpl<RegionalIntrodu
 
     @Autowired
     private RegionalIntroductionMapper regionalIntroductionMapper;
+
+    @Override
+    public List<RegionalIntroduction> searchRegionalIntroduction() {
+        return regionalIntroductionMapper.selectList(null);
+    }
+
     @Override
     public int saveOrUpdateRegionalIntroduction(RegionalIntroductionRequest regionalIntroductionRequest) {
         int result;

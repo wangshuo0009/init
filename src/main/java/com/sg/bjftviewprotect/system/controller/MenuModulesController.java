@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sg.bjftviewprotect.system.annotation.LoginVerification;
 import com.sg.bjftviewprotect.system.common.Result;
+import com.sg.bjftviewprotect.system.constant.CommonConstant;
 import com.sg.bjftviewprotect.system.entity.MenuModules;
 import com.sg.bjftviewprotect.system.service.MenuModulesService;
 import com.sg.bjftviewprotect.system.util.PageUtil;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/menuModules")
-@Tag(name = "菜单子模块管理")
+@Tag(name = "菜单下的指标项管理")
 @LoginVerification
 public class MenuModulesController {
 
@@ -42,7 +43,7 @@ public class MenuModulesController {
     }
 
 
-    @Operation(summary = "新增更和新子模块")
+    @Operation(summary = "新增更和新菜单下的指标项")
     @PostMapping("/saveOrUpdateMenuModules")
     public Result<?> saveOrUpdateMenuModules(@RequestBody MenuModules menuModules) {
         // 参数验证
@@ -51,11 +52,12 @@ public class MenuModulesController {
         }catch (Exception e){
             return Result.fail(e.getMessage());
         }
+        menuModules.setIsDelete(CommonConstant.NOT_DELETE);
         menuModulesService.saveOrUpdate(menuModules);
         return Result.success("操作成功");
     }
 
-    @Operation(summary = "删除子模块")
+    @Operation(summary = "删除菜单下的指标项")
     @DeleteMapping("/deleteMenuModules/{id}")
     public Result<?> deleteMenuModules(@PathVariable("id") String id) {
         menuModulesService.removeById(id);

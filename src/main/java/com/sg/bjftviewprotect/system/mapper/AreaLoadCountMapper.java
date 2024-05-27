@@ -22,4 +22,5 @@ public interface AreaLoadCountMapper extends BaseMapper<AreaLoadCount> {
 
     Page<AreaLoadCount> selectAreaLoadCount(@Param("page") Page<AreaLoadCount> page, @Param("areaLoadCountRequest") AreaLoadCountRequest areaLoadCountRequest);
     List<AreaLoadCount> selectAreaLoadCountForView();
+
 }
