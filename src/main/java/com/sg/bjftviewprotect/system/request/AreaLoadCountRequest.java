@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 /**
  * <p>
@@ -32,7 +31,7 @@ public class AreaLoadCountRequest implements Serializable {
     private String statisticTime;
 
     @Schema(description = "负荷，用电量")
-    private BigDecimal powerLoad;
+    private Double powerLoad;
 
     private Integer pageSize;
     private Integer pageNum;

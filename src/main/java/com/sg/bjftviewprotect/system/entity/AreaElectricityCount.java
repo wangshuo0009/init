@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -45,7 +44,7 @@ public class AreaElectricityCount implements Serializable {
 
     @Schema(description = "区域用电量")
     @TableField("electricity_usage")
-    private BigDecimal electricityUsage;
+    private Double electricityUsage;
 
     @Schema(description = "创建时间")
     @TableField("create_time")

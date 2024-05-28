@@ -3,8 +3,6 @@ package com.sg.bjftviewprotect.system.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import java.math.BigDecimal;
-
 @Data
 public class AreaElectricityCountRequest {
 
@@ -18,7 +16,7 @@ public class AreaElectricityCountRequest {
     private String statisticTime;
 
     @Schema(description = "区域用电量")
-    private BigDecimal electricityUsage;
+    private Double electricityUsage;
 
     @Schema(description = "创建时间")
     private String createTime;

@@ -41,4 +41,7 @@ public class WeatherRequest{
 
     @Schema(description = "统计时间 yyyy-MM-dd")
     private String statisticTime;
+
+    private Integer pageSize;
+    private Integer pageNum;
 }

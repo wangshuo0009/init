@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 /**
  * <p>
@@ -39,5 +38,5 @@ public class AreaUserCount implements Serializable {
 
     @Schema(description = "占比")
     @TableField("rate")
-    private BigDecimal rate;
+    private Double rate;
 }

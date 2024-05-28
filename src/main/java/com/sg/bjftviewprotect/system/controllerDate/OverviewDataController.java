@@ -7,6 +7,7 @@ import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.entity.*;
 import com.sg.bjftviewprotect.system.request.*;
 import com.sg.bjftviewprotect.system.service.*;
+import com.sg.bjftviewprotect.system.util.FileUtils;
 import com.sg.bjftviewprotect.system.util.PageUtil;
 import com.sg.bjftviewprotect.system.util.TimeUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,6 +38,8 @@ public class OverviewDataController {
     @Autowired
     private AreaUserCountService areaUserCountService;
     @Autowired
+    private PowerUserService powerUserService;
+    @Autowired
     private PowerGridViewService powerGridViewService;
     @Autowired
     private AreaLoadCountService areaLoadCountService;
@@ -45,11 +49,14 @@ public class OverviewDataController {
     private OperationMaintenanceService operationMaintenanceService;
     @Autowired
     private WeatherService weatherService;
+    @Autowired
+    private FaultAlarmService faultAlarmService;
 
     @Operation(summary = "北京丰台区域简介新增和更新接口")
     @GetMapping("/searchRegionalIntroduction")
     public Result<List<RegionalIntroduction>> searchRegionalIntroduction() {
-        return Result.success("查询成功", regionalIntroductionService.list());
+        List<RegionalIntroduction> list = regionalIntroductionService.list();
+        return Result.success("查询成功", list);
     }
 
     @Operation(summary = "北京丰台区域简介新增和更新接口")
@@ -104,24 +111,25 @@ public class OverviewDataController {
      * 数据来源用查询用户档案信息接口对应的用户档案信息表
      * 这里先单表操作， 后续再说
      */
-    @Operation(summary = "区域用户统计查询接口")
+    @Operation(summary = "区域用户统计查询接口",description = "弃用了，用用户档案接口")
     @GetMapping("/searchAreaUserCount")
     public Result<List<AreaUserCount>> searchAreaUserCount() {
-        List<AreaUserCount> list = areaUserCountService.searchAreaUserCount();
-        return Result.success("查询成功成功", list);
+        //List<AreaUserCount> list = areaUserCountService.searchAreaUserCount();
+        //return Result.success("查询成功成功", list);
+        return Result.fail("弃用了，用用户档案接口");
     }
 
-    @Operation(summary = "区域用户统计新增和更新接口")
+    @Operation(summary = "区域用户统计新增和更新接口",description = "弃用了，用用户档案接口")
     @PostMapping("/savOrUpdateAreaUserCount")
     public Result<?> savOrUpdateAreaUserCount(@RequestBody AreaUserCount areaUserCount) {
-        areaUserCountService.saveOrUpdate(areaUserCount);
-        return Result.success("操作成功");
+        //areaUserCountService.saveOrUpdate(areaUserCount);
+        return Result.fail("弃用了，用用户档案接口");
     }
-    @Operation(summary = "区域用户统计删除接口")
+    @Operation(summary = "区域用户统计删除接口",description = "弃用了，用用户档案接口")
     @DeleteMapping("/deleteAreaUserCount/{id}")
     public Result<?> deleteAreaUserCount(@PathVariable("id") String id) {
-        areaUserCountService.removeById(id);
-        return Result.success("操作成功");
+        //areaUserCountService.removeById(id);
+        return Result.fail("弃用了，用用户档案接口");
     }
 
     @Operation(summary = "区域用电量查询接口")
@@ -191,20 +199,48 @@ public class OverviewDataController {
     }
 
 
+    @Operation(summary = "故障告警监查询接口")
+    @PostMapping("/searchFaultAlarm")
+    public Result<Page<FaultAlarm>> searchFaultAlarm(@RequestBody FaultAlarmRequest faultAlarmRequest) {
+        PageUtil.initPage(faultAlarmRequest);
+        String statisticTime = faultAlarmRequest.getStatisticTime().substring(0, 10);
+        LambdaQueryWrapper<FaultAlarm> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(StringUtils.isNotBlank(faultAlarmRequest.getId()),FaultAlarm::getId, faultAlarmRequest.getId())
+                .like(StringUtils.isNotBlank(faultAlarmRequest.getStation()),FaultAlarm::getStation, faultAlarmRequest.getStation())
+                .apply(StringUtils.isNotBlank(faultAlarmRequest.getStatisticTime()),"date_format(statistic_time,'%Y-%m-%d') = date_format(str_to_date('"+statisticTime+"','%Y-%m-%d'),'%Y-%m-%d')")
+                .orderByDesc(FaultAlarm::getStatisticTime);
+        Page<FaultAlarm> page = new Page<>(faultAlarmRequest.getPageNum(), faultAlarmRequest.getPageSize());
+        faultAlarmService.page(page,lambdaQueryWrapper);
+        return Result.success("查询成功", page);
+    }
+
     @Operation(summary = "故障告警监测新增和更新接口")
-    @PostMapping("/savOrUpdateAlarmMonitoring")
-    public Result<?> savOrUpdateAlarmMonitoring() {
-
-
-
+    @PostMapping("/savOrUpdateFaultAlarm")
+    public Result<?> savOrUpdateFaultAlarm(FaultAlarmRequest faultAlarmRequest) {
+        if (StringUtils.isBlank(faultAlarmRequest.getStation())){
+            return Result.fail("请求参数不完整");
+        }
+        LocalDateTime statisticTime = StringUtils.isNotBlank(faultAlarmRequest.getStatisticTime()) ? TimeUtil.parse(faultAlarmRequest.getStatisticTime()) : null;
+        MultipartFile file = faultAlarmRequest.getAlarmImage();
+        String alarmImage = file != null ? FileUtils.fileToBase64(file) : null;
+        faultAlarmService.saveOrUpdate(new FaultAlarm(){{
+            setId(faultAlarmRequest.getId());
+            setStation(faultAlarmRequest.getStation());
+            setLedger(faultAlarmRequest.getLedger());
+            setPointName(faultAlarmRequest.getPointName());
+            setPatrol(faultAlarmRequest.getPatrol());
+            setStatisticTime(statisticTime);
+            setAlarmContent(faultAlarmRequest.getAlarmContent());
+            setAlarmImage(alarmImage);
+        }});
         return Result.success("操作成功");
     }
 
     @Operation(summary = "故障告警监测删除接口")
-    @DeleteMapping("/deleteAlarmMonitoring/{id}")
-    public Result<?> deleteAlarmMonitoring(@PathVariable("id") String id) {
-
-        return Result.success("操作成功");
+    @DeleteMapping("/deleteFaultAlarm/{id}")
+    public Result<?> deleteFaultAlarm(@PathVariable("id") String id) {
+        faultAlarmService.removeById(id);
+        return Result.success("删除成功");
     }
 
 

@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -45,7 +44,7 @@ public class AreaLoadCount implements Serializable {
 
     @Schema(description = "负荷，用电量")
     @TableField("power_load")
-    private BigDecimal powerLoad;
+    private Double powerLoad;
 
     @Schema(description = "创建时间")
     @TableField("create_time")

@@ -35,17 +35,36 @@ import java.util.stream.Collectors;
 public class CommonDataController {
     @Autowired
     private PowerUserService powerUserService;
+    @Operation(summary = "用户档案信息查询", tags = "用户档案")
+    @PostMapping("/searchPowerUserInfo")
+    public Result<Page<PowerUserInfo>> searchPowerUserInfo(@RequestBody PowerUserInfoRequest powerUserInfoRequest) {
+        PageUtil.initPage(powerUserInfoRequest);
 
-    @Operation(summary = "用户档案信息新增接口",
+        Page<PowerUserInfo> page = new Page<>(powerUserInfoRequest.getPageNum(), powerUserInfoRequest.getPageSize());
+        LambdaQueryWrapper<PowerUserInfo> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(StringUtils.isNotBlank(powerUserInfoRequest.getId()), PowerUserInfo::getId, powerUserInfoRequest.getId())
+                .like(StringUtils.isNotBlank(powerUserInfoRequest.getUsername()), PowerUserInfo::getUsername, powerUserInfoRequest.getUsername())
+                .like(StringUtils.isNotBlank(powerUserInfoRequest.getUserCode()), PowerUserInfo::getUserCode, powerUserInfoRequest.getUserCode())
+                .like(StringUtils.isNotBlank(powerUserInfoRequest.getAmmeter()), PowerUserInfo::getAmmeter, powerUserInfoRequest.getAmmeter());
+
+        powerUserService.page(page, lambdaQueryWrapper);
+        return Result.success("查询成功", page);
+    }
+
+
+    @Operation(summary = "用户档案信息新增-- excel",
             tags = "用户档案",
             description = "仅支持新增," +
                     "此接口仅支持单个sheet操作，多个有时间后期再改," +
                     "支持多文件上传，文件要录入的的列索引必须保持一直," +
                     "插入的column 每列，必须对应类的属性名，不在类的列可以写column1，column2等等代替，空白列也要写，用','英文逗号拼接 ")
     @PostMapping("/savePowerUserInfoExcel")
-    public Result<?> savePowerUserInfoExcel(List<MultipartFile> file,
+    public Result<PowerUserInfo> savePowerUserInfoExcel(List<MultipartFile> file,
                                     String[] columns,
                                     Integer type) {
+        if (type == null || columns == null || columns.length == 0 || file == null || file.isEmpty()) {
+            return Result.fail("请求参数不完整");
+        }
         LocalDateTime createTime = LocalDateTime.now();
         //String[] columns = {"userCode", "code", "userName","paymentName", "powerUsage", "Column6","important", "market", "loadType"};
         List<PowerUserInfo> finalPowerUsers = new ArrayList<>();
@@ -71,21 +90,7 @@ public class CommonDataController {
         powerUserService.saveOrUpdateBatch(finalPowerUsers);
         return Result.success("操作成功：" + finalPowerUsers.size() + "条数据");
     }
-    @Operation(summary = "查询用户档案信息", tags = "用户档案")
-    @PostMapping("/searchPowerUserInfo")
-    public Result<Page<PowerUserInfo>> searchPowerUserInfo(@RequestBody PowerUserInfoRequest powerUserInfoRequest) {
-        PageUtil.initPage(powerUserInfoRequest);
 
-        Page<PowerUserInfo> page = new Page<>(powerUserInfoRequest.getPageNum(), powerUserInfoRequest.getPageSize());
-        LambdaQueryWrapper<PowerUserInfo> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(StringUtils.isNotBlank(powerUserInfoRequest.getId()), PowerUserInfo::getId, powerUserInfoRequest.getId())
-                .like(StringUtils.isNotBlank(powerUserInfoRequest.getUsername()), PowerUserInfo::getUsername, powerUserInfoRequest.getUsername())
-                .like(StringUtils.isNotBlank(powerUserInfoRequest.getUserCode()), PowerUserInfo::getUserCode, powerUserInfoRequest.getUserCode())
-                .like(StringUtils.isNotBlank(powerUserInfoRequest.getAmmeter()), PowerUserInfo::getAmmeter, powerUserInfoRequest.getAmmeter());
-
-        powerUserService.page(page, lambdaQueryWrapper);
-        return Result.success("查询成功", page);
-    }
 
     @Operation(summary = "用户档案信息新增或修改", tags = "用户档案")
     @PostMapping("/saveOrUpdatePowerUserInfo")

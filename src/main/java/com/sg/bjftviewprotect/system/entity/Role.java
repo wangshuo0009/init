@@ -63,7 +63,7 @@ public class Role implements Serializable {
     @TableField("create_time")
     private LocalDateTime createTime;
 
-    @Schema(description = "菜单")
+    @Schema(description = "菜单id")
     @TableField(exist = false)
     private List<String> menuId;
 
