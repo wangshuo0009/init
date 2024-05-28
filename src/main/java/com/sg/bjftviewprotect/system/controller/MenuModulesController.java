@@ -34,7 +34,7 @@ public class MenuModulesController {
 
     @Operation(summary = "查询菜单指标模块",tags = "菜单管理")
     @GetMapping("/searchMenuModules")
-    public Result<?> searchMenuModules(@RequestParam(value = "id") String id) {
+    public Result<Page<MenuModules>> searchMenuModules(@RequestParam(value = "id") String id) {
         Page<MenuModules> page = PageUtil.createPageForList();
         menuModulesService.page(page, new LambdaQueryWrapper<MenuModules>()
                 .eq(StringUtils.isNotBlank(id), MenuModules::getMenuId, id)

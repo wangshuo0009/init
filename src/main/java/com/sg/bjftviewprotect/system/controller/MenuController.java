@@ -40,7 +40,7 @@ public class MenuController {
     @Operation(summary = "角色管理-绑定菜单列表", tags = "角色管理")
     @GetMapping("searchAllMenu")
     //public Result<?> searchAllMenu(@CookieValue(value = CommonConstant.X_USER_ID) String userId) {
-    public Result<?> searchAllMenu(@RequestHeader(value = CommonConstant.X_USER_ID) String userId) {
+    public Result<Page<Menu>> searchAllMenu(@RequestHeader(value = CommonConstant.X_USER_ID) String userId) {
         MenuRequest menuRequest = PageUtil.pageForList(new MenuRequest());
         Page<Menu> page = menuService.searchMenu(menuRequest, userId);
         return Result.success("查询成功", page);
@@ -48,7 +48,7 @@ public class MenuController {
 
     @Operation(summary = "查询菜单信息")
     @PostMapping("searchMenu")
-    public Result<?> searchMenu(@RequestBody MenuRequest menuRequest,
+    public Result<Page<Menu>> searchMenu(@RequestBody MenuRequest menuRequest,
                                 //@CookieValue(value = CommonConstant.X_USER_ID) String userId) {
                                 @RequestHeader(value = CommonConstant.X_USER_ID) String userId) {
         PageUtil.initPage(menuRequest);

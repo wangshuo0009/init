@@ -1,5 +1,6 @@
 package com.sg.bjftviewprotect.view.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.entity.*;
 import com.sg.bjftviewprotect.system.service.*;
@@ -40,24 +41,26 @@ public class OverviewController {
     private AreaElectricityCountService areaElectricityCountService;
     @Autowired
     private OperationMaintenanceService operationMaintenanceService;
+    @Autowired
+    private WeatherService weatherService;
 
     @Operation(summary = "北京丰台区域简介查询接口")
     @GetMapping("/regionalIntroduction")
-    public Result<?> searchRegionalIntroduction() {
+    public Result<List<RegionalIntroduction>> searchRegionalIntroduction() {
         List<RegionalIntroduction> one = regionalIntroductionService.searchRegionalIntroduction();
         return Result.success("查询成功", one);
     }
 
     @Operation(summary = "区域负荷统计查询接口")
     @GetMapping("/areaLoadCount")
-    public Result<?> areaLoadCount() {
+    public Result<Map<String, List<AreaLoadCount>>> areaLoadCount() {
         Map<String, List<AreaLoadCount>> map = areaLoadCountService.searchAreaLoadCountForView();
         return Result.success("查询成功" , map);
     }
 
     @Operation(summary = "区域用户统计查询接口")
     @GetMapping("/areaUserCount")
-    public Result<?> areaUserCount() {
+    public Result<List<AreaUserCount>> areaUserCount() {
         List<AreaUserCount> list = areaUserCountService.searchAreaUserCount();
         // TODO 下面注释别删，这个是查询规则，先按单表查询
         //Set<String> highSet = new HashSet<>();
@@ -93,7 +96,7 @@ public class OverviewController {
 
     @Operation(summary = "区域用电量统计查询接口")
     @GetMapping("/areaElectricityCount")
-    public Result<?> areaElectricityCount() {
+    public Result<Map<String, List<AreaElectricityCount>>> areaElectricityCount() {
         Map<String, List<AreaElectricityCount>> map = areaElectricityCountService.searchAreaElectricityCountForView();
         return Result.success("查询成功", map);
     }
@@ -101,7 +104,7 @@ public class OverviewController {
 
     @Operation(summary = "主动运维清单统计查询接口", description = "类型1巡视工单，2故障工单")
     @GetMapping("/operationMaintenance")
-    public Result<?> operationMaintenance(@RequestParam("type") Integer type) {
+    public Result<Map<Integer, OperationMaintenanceUtil>> operationMaintenance(@RequestParam("type") Integer type) {
         Map<Integer, OperationMaintenanceUtil> map = operationMaintenanceService.searchOperationMaintenanceForView(type);
         return Result.success("查询成功", map);
     }
@@ -117,14 +120,14 @@ public class OverviewController {
 
     @Operation(summary = "区域天气环境查询接口")
     @GetMapping("/weather")
-    public Result<?> weather() {
-
-        return Result.success("查询成功");
+    public Result<Weather> weather() {
+        Weather one = weatherService.getOne(new QueryWrapper<Weather>().apply("date_format(statistic_time,'%Y-%m-%d') = date_format(CURRENT_DATE (),'%Y-%m-%d')"),false);
+        return Result.success("查询成功",one);
     }
 
     @Operation(summary = "电网概览统计查询接口")
     @GetMapping("/powerGridView")
-    public Result<?> powerGridView() {
+    public Result<List<PowerGridView>> powerGridView() {
         List<PowerGridView> list = powerGridViewService.list();
         return Result.success("查询成功", list);
     }

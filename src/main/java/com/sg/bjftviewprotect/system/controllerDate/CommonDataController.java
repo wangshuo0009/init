@@ -73,7 +73,7 @@ public class CommonDataController {
     }
     @Operation(summary = "查询用户档案信息", tags = "用户档案")
     @PostMapping("/searchPowerUserInfo")
-    public Result<?> searchPowerUserInfo(@RequestBody PowerUserInfoRequest powerUserInfoRequest) {
+    public Result<Page<PowerUserInfo>> searchPowerUserInfo(@RequestBody PowerUserInfoRequest powerUserInfoRequest) {
         PageUtil.initPage(powerUserInfoRequest);
 
         Page<PowerUserInfo> page = new Page<>(powerUserInfoRequest.getPageNum(), powerUserInfoRequest.getPageSize());
