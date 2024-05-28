@@ -28,6 +28,14 @@ public class TimeUtil {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return LocalDateTime.parse(dateTime,formatter);
     }
+    /**
+     * 日期转时间
+     * @param dateTime 需要转换的时间 yyyy-MM-dd
+     */
+    public static LocalDateTime parseYYYYMMDD(String dateTime) {
+        dateTime = dateTime.substring(0, 10) + " 00:00:00";
+        return parse(dateTime);
+    }
 
 
 }
