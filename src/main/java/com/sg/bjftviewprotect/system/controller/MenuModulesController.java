@@ -61,7 +61,7 @@ public class MenuModulesController {
     @DeleteMapping("/deleteMenuModules/{id}")
     public Result<?> deleteMenuModules(@PathVariable("id") String id) {
         menuModulesService.removeById(id);
-        return Result.success("新增成功");
+        return Result.success("删除成功");
     }
 
 

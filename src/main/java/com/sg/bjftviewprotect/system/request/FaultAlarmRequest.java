@@ -40,7 +40,7 @@ public class FaultAlarmRequest{
     private String alarmContent;
 
 
-    @Schema(description = "告警图片")
+    @Schema(description = "告警图片，先不做")
     private MultipartFile alarmImage;
 
     private Integer pageSize;

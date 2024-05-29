@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sg.bjftviewprotect.system.mapper.ColumnConfigMapper">
+
+    <select id="selectColumnList" resultType="com.sg.bjftviewprotect.system.entity.Columns">
+        SELECT
+            COLUMN_NAME AS prop,
+            COLUMN_COMMENT AS title
+        FROM
+            INFORMATION_SCHEMA.COLUMNS
+        WHERE
+            TABLE_NAME = #{tableName}
+        ORDER BY
+            ORDINAL_POSITION;
+    </select>
+</mapper>

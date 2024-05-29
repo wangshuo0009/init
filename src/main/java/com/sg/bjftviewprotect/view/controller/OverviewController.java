@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
+import static com.sg.bjftviewprotect.system.util.NumberUtil.roundBigDecimal;
+
 /**
  * <p>
  * 前端控制器
@@ -64,8 +66,7 @@ public class OverviewController {
     @Operation(summary = "区域用户统计查询接口")
     @GetMapping("/areaUserCount")
     public Result<List<AreaUserCount>> areaUserCount() {
-        List<AreaUserCount> list = areaUserCountService.searchAreaUserCount();
-        // TODO 下面注释别删，这个是查询规则，先按单表查询
+
         Set<String> highSet = new HashSet<>();
         Set<String> lowSet = new HashSet<>();
         List<PowerUserInfo> powerUserInfos = powerUserService.list();
@@ -81,20 +82,22 @@ public class OverviewController {
         int allUserNum = highSet.size() + lowSet.size();
         int highUserNum = highSet.size();
         int lowUserNum = lowSet.size();
-        List<AreaUserCount> areaUserCounts = areaUserCountService.list();
+        List<AreaUserCount> areaUserCounts = areaUserCountService.searchAreaUserCount();
         areaUserCounts.forEach(areaUserCount -> {
             if (areaUserCount.getName().contains("总用户")) {
                 areaUserCount.setNum(allUserNum);
-                areaUserCount.setRate(100.0);
+                areaUserCount.setRate(roundBigDecimal(100,2).doubleValue());
             } else if (areaUserCount.getName().contains("高压用户")) {
                 areaUserCount.setNum(highUserNum);
-                areaUserCount.setRate(((double) highUserNum / (double) allUserNum) * 100);
+                double rate = (double) highUserNum / (double) allUserNum * 100;
+                areaUserCount.setRate(roundBigDecimal(rate, 2).doubleValue());
             } else if (areaUserCount.getName().contains("低压用户")) {
                 areaUserCount.setNum(lowUserNum);
-                areaUserCount.setRate(((double) lowUserNum / (double) allUserNum) * 100);
+                double rate = (double) lowUserNum / (double) allUserNum * 100;
+                areaUserCount.setRate(roundBigDecimal(rate, 2).doubleValue());
             }
         });
-        return Result.success("查询成功", list);
+        return Result.success("查询成功", areaUserCounts);
     }
 
     @Operation(summary = "区域用电量统计查询接口")

@@ -2,7 +2,6 @@ package com.sg.bjftviewprotect.system.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -56,7 +55,7 @@ public class MenuModules implements Serializable {
 
     @Schema(description = "1删除，0未删除")
     @TableField("is_delete")
-    @TableLogic
+    //@TableLogic
     private Integer isDelete;
 
     @Schema(description = "创建时间")
