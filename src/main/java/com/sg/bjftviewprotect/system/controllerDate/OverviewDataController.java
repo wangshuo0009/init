@@ -49,6 +49,8 @@ public class OverviewDataController {
     private WeatherService weatherService;
     @Autowired
     private FaultAlarmService faultAlarmService;
+    @Autowired
+    private CommonDataController commonDataController;
 
     @Operation(summary = "北京丰台区域简介查询接口")
     @PostMapping("/searchRegionalIntroduction")
@@ -109,25 +111,29 @@ public class OverviewDataController {
      * 数据来源用查询用户档案信息接口对应的用户档案信息表
      * 这里先单表操作， 后续再说
      */
-    @Operation(summary = "区域用户统计查询接口",description = "弃用了，用用户档案接口")
+    @Operation(summary = "区域用户统计查询接口",description = "用用户档案接口")
     @PostMapping("/searchAreaUserCount")
-    public Result<List<AreaUserCount>> searchAreaUserCount() {
+    public Result<Page<PowerUserInfo>> searchAreaUserCount(@RequestBody PowerUserInfoRequest powerUserInfoRequest) {
         //List<AreaUserCount> list = areaUserCountService.searchAreaUserCount();
         //return Result.success("查询成功成功", list);
-        return Result.fail("弃用了，用用户档案接口");
+        //return Result.fail("弃用了，用用户档案接口");
+        return commonDataController.searchPowerUserInfo(powerUserInfoRequest);
     }
 
-    @Operation(summary = "区域用户统计新增和更新接口",description = "弃用了，用用户档案接口")
+    @Operation(summary = "区域用户统计新增和更新接口",description = "用用户档案接口")
     @PostMapping("/saveOrUpdateAreaUserCount")
-    public Result<?> saveOrUpdateAreaUserCount(@RequestBody AreaUserCount areaUserCount) {
+    public Result<?> saveOrUpdateAreaUserCount(@RequestBody PowerUserInfoRequest powerUserInfoRequest) {
         //areaUserCountService.saveOrUpdate(areaUserCount);
-        return Result.fail("弃用了，用用户档案接口");
+        //return Result.fail("弃用了，用用户档案接口");
+        return commonDataController.saveOrUpdatePowerUserInfo(powerUserInfoRequest);
+
     }
-    @Operation(summary = "区域用户统计删除接口",description = "弃用了，用用户档案接口")
+    @Operation(summary = "区域用户统计删除接口",description = "用用户档案接口")
     @DeleteMapping("/deleteAreaUserCount/{id}")
     public Result<?> deleteAreaUserCount(@PathVariable("id") String id) {
         //areaUserCountService.removeById(id);
-        return Result.fail("弃用了，用用户档案接口");
+        //return Result.fail("弃用了，用用户档案接口");
+        return commonDataController.deletePowerUserInfo(id);
     }
 
     @Operation(summary = "区域用电量查询接口")
@@ -197,49 +203,22 @@ public class OverviewDataController {
     }
 
 
-    @Operation(summary = "故障告警监查询接口")
+    @Operation(summary = "故障告警监查询接口",description = "用的是故障告警档案接口")
     @PostMapping("/searchFaultAlarm")
     public Result<Page<FaultAlarm>> searchFaultAlarm(@RequestBody FaultAlarmRequest faultAlarmRequest) {
-        PageUtil.initPage(faultAlarmRequest);
-        String statisticTime = faultAlarmRequest.getStatisticTime().substring(0, 10);
-        LambdaQueryWrapper<FaultAlarm> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(StringUtils.isNotBlank(faultAlarmRequest.getId()),FaultAlarm::getId, faultAlarmRequest.getId())
-                .like(StringUtils.isNotBlank(faultAlarmRequest.getStation()),FaultAlarm::getStation, faultAlarmRequest.getStation())
-                .apply(StringUtils.isNotBlank(faultAlarmRequest.getStatisticTime()),"date_format(statistic_time,'%Y-%m-%d') = date_format(str_to_date('"+statisticTime+"','%Y-%m-%d'),'%Y-%m-%d')")
-                .orderByDesc(FaultAlarm::getStatisticTime);
-        Page<FaultAlarm> page = new Page<>(faultAlarmRequest.getPageNum(), faultAlarmRequest.getPageSize());
-        faultAlarmService.page(page,lambdaQueryWrapper);
-        return Result.success("查询成功", page);
+        return commonDataController.searchFaultAlarm(faultAlarmRequest);
     }
 
-    @Operation(summary = "故障告警监测新增和更新接口")
+    @Operation(summary = "故障告警监测新增和更新接口",description = "用的是故障告警档案接口")
     @PostMapping("/saveOrUpdateFaultAlarm")
     public Result<?> saveOrUpdateFaultAlarm(FaultAlarmRequest faultAlarmRequest) {
-        if (StringUtils.isBlank(faultAlarmRequest.getStation())){
-            return Result.fail("请求参数不完整");
-        }
-        LocalDateTime statisticTime = StringUtils.isNotBlank(faultAlarmRequest.getStatisticTime()) ? TimeUtil.parse(faultAlarmRequest.getStatisticTime()) : null;
-        // 告警图片
-        //MultipartFile file = faultAlarmRequest.getAlarmImage();
-        //String alarmImage = file != null ? FileUtils.fileToBase64(file) : null;
-        faultAlarmService.saveOrUpdate(new FaultAlarm(){{
-            setId(faultAlarmRequest.getId());
-            setStation(faultAlarmRequest.getStation());
-            setLedger(faultAlarmRequest.getLedger());
-            setPointName(faultAlarmRequest.getPointName());
-            setPatrol(faultAlarmRequest.getPatrol());
-            setStatisticTime(statisticTime);
-            setAlarmContent(faultAlarmRequest.getAlarmContent());
-            setAlarmImage(null);
-        }});
-        return Result.success("操作成功");
+        return commonDataController.saveOrUpdateFaultAlarm(faultAlarmRequest);
     }
 
-    @Operation(summary = "故障告警监测删除接口")
+    @Operation(summary = "故障告警监测删除接口",description = "用的是故障告警档案接口")
     @DeleteMapping("/deleteFaultAlarm/{id}")
     public Result<?> deleteFaultAlarm(@PathVariable("id") String id) {
-        faultAlarmService.removeById(id);
-        return Result.success("删除成功");
+        return commonDataController.deleteFaultAlarm(id);
     }
 
 

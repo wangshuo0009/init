@@ -1,6 +1,7 @@
 package com.sg.bjftviewprotect.system.common;
 
 import com.sg.bjftviewprotect.system.constant.CommonConstant;
+import com.sg.bjftviewprotect.system.exception.NotLoggedInException;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -8,7 +9,7 @@ import javax.servlet.http.HttpSession;
 
 /**
  * @Author wangshuo
- * @Description
+ * @Description Token管理类，用于管理用户的Token及其有效期
  * @Date 2024/5/9 14:07
  **/
 public class TokenManager {
@@ -20,39 +21,39 @@ public class TokenManager {
     public static final String TOKEN_EXPIRY_PREFIX = "TOKEN_EXPIRY_";
 
     /**
-     * 设置token
+     * 设置用户Token及其过期时间到session
+     *
+     * @param request HTTP请求对象
+     * @param account 用户账号
+     * @param token   用户令牌
      */
-    public static void setUserToken(HttpServletRequest request, String account, String token) {
+    public static void setAccountToken(HttpServletRequest request, String account, String token) {
         HttpSession session = request.getSession();
-        session.setAttribute(TOKEN_ATTRIBUTE_PREFIX + account, token);
+        session.setAttribute(TOKEN_ATTRIBUTE_PREFIX + token, account);
         long expiryTime = System.currentTimeMillis() + SESSION_TIMEOUT_MS;
         session.setAttribute(TOKEN_EXPIRY_PREFIX + token, expiryTime);
     }
-    /**
-     * 获取token
-     */
-    public static String getToken(HttpServletRequest request) {
-        String account = getAccountFromCookies(request);
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            return (String) session.getAttribute(TOKEN_ATTRIBUTE_PREFIX + account);
-        }
-        return null;
-    }
 
     /**
-     * 验证过期时间
+     * 验证Token是否有效
+     *
+     * @param request HTTP请求对象
+     * @return boolean 是否有效
      */
     public static boolean isTokenValid(HttpServletRequest request) {
-        String account = getAccountFromCookies(request);
-        if (account == null) {
-            return false;
-        }
-
-        String token = getToken(request);
+        String token = getTokenFromCookies(request);
         if (token == null) {
             return false;
         }
+        //String account = getAccountFromCookies(request);
+        //if (account == null) {
+        //    return false;
+        //}
+        // 验证token 和 账户是否绑定
+        //String accountFromSession = getAccountFromSession(request);
+        //if (!StringUtils.equals(account, accountFromSession)) {
+        //    throw new NotLoggedInException("Token not found in cookies");
+        //}
 
         HttpSession session = request.getSession(false);
         if (session != null) {
@@ -63,17 +64,19 @@ public class TokenManager {
     }
 
     /**
-     * 刷新Token过期时间
+     * 刷新Token的过期时间
+     *
+     * @param request HTTP请求对象
      */
     public static void onSuccessfulRequest(HttpServletRequest request) {
         String account = getAccountFromCookies(request);
         if (account == null) {
-            throw new RuntimeException("Account not found in cookies");
+            throw new NotLoggedInException("Token not found in cookies");
         }
 
         HttpSession session = request.getSession(false);
         if (session != null) {
-            String token = getToken(request);
+            String token = getTokenFromCookies(request);
             if (token != null) {
                 long newExpiryTime = System.currentTimeMillis() + SESSION_TIMEOUT_MS;
                 session.setAttribute(TOKEN_EXPIRY_PREFIX + token, newExpiryTime);
@@ -81,9 +84,11 @@ public class TokenManager {
         }
     }
 
-
     /**
-     * 从cookie 获取 Account
+     * 从Cookie中获取用户账号
+     *
+     * @param request HTTP请求对象
+     * @return String 用户账号
      */
     private static String getAccountFromCookies(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
@@ -93,6 +98,39 @@ public class TokenManager {
                     return cookie.getValue();
                 }
             }
+        }
+        return null;
+    }
+
+    /**
+     * 从Cookie中获取Token
+     *
+     * @param request HTTP请求对象
+     * @return String 用户令牌
+     */
+    private static String getTokenFromCookies(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(CommonConstant.X_Token)) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 从session中获取用户账号
+     *
+     * @param request HTTP请求对象
+     * @return String 用户账号
+     */
+    public static String getAccountFromSession(HttpServletRequest request) {
+        String token = getTokenFromCookies(request);
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            return (String) session.getAttribute(TOKEN_ATTRIBUTE_PREFIX + token);
         }
         return null;
     }

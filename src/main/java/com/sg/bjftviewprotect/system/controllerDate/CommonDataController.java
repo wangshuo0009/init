@@ -5,11 +5,15 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.constant.CommonConstant;
+import com.sg.bjftviewprotect.system.entity.FaultAlarm;
 import com.sg.bjftviewprotect.system.entity.PowerUserInfo;
+import com.sg.bjftviewprotect.system.request.FaultAlarmRequest;
 import com.sg.bjftviewprotect.system.request.PowerUserInfoRequest;
+import com.sg.bjftviewprotect.system.service.FaultAlarmService;
 import com.sg.bjftviewprotect.system.service.PowerUserService;
 import com.sg.bjftviewprotect.system.util.EasyExcelUtil;
 import com.sg.bjftviewprotect.system.util.PageUtil;
+import com.sg.bjftviewprotect.system.util.TimeUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +39,9 @@ import java.util.stream.Collectors;
 public class CommonDataController {
     @Autowired
     private PowerUserService powerUserService;
+    @Autowired
+    private FaultAlarmService faultAlarmService;
+
     @Operation(summary = "用户档案信息查询", tags = "用户档案")
     @PostMapping("/searchPowerUserInfo")
     public Result<Page<PowerUserInfo>> searchPowerUserInfo(@RequestBody PowerUserInfoRequest powerUserInfoRequest) {
@@ -113,16 +120,57 @@ public class CommonDataController {
         return Result.success("操作成功");
     }
 
-    @Operation(summary = "用户档案信息新增或修改", tags = "用户档案")
+    @Operation(summary = "用户档案信息删除", tags = "用户档案")
     @DeleteMapping("/deletePowerUserInfo/{id}")
     public Result<?> deletePowerUserInfo(@PathVariable("id") String id) {
         powerUserService.removeById(id);
         return Result.success("删除成功");
     }
 
+    @Operation(summary = "故障告警监查询接口",tags = "开关站/故障告警档案")
+    @PostMapping("/searchFaultAlarm")
+    public Result<Page<FaultAlarm>> searchFaultAlarm(@RequestBody FaultAlarmRequest faultAlarmRequest) {
+        PageUtil.initPage(faultAlarmRequest);
+        String statisticTime = faultAlarmRequest.getStatisticTime().substring(0, 10);
+        LambdaQueryWrapper<FaultAlarm> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(StringUtils.isNotBlank(faultAlarmRequest.getId()),FaultAlarm::getId, faultAlarmRequest.getId())
+                .like(StringUtils.isNotBlank(faultAlarmRequest.getStation()),FaultAlarm::getStation, faultAlarmRequest.getStation())
+                .apply(StringUtils.isNotBlank(faultAlarmRequest.getStatisticTime()),"date_format(statistic_time,'%Y-%m-%d') = date_format(str_to_date('"+statisticTime+"','%Y-%m-%d'),'%Y-%m-%d')")
+                .orderByDesc(FaultAlarm::getStatisticTime);
+        Page<FaultAlarm> page = new Page<>(faultAlarmRequest.getPageNum(), faultAlarmRequest.getPageSize());
+        faultAlarmService.page(page,lambdaQueryWrapper);
+        return Result.success("查询成功", page);
+    }
 
+    @Operation(summary = "故障告警监测新增和更新接口",tags = "开关站/故障告警档案")
+    @PostMapping("/saveOrUpdateFaultAlarm")
+    public Result<?> saveOrUpdateFaultAlarm(FaultAlarmRequest faultAlarmRequest) {
+        if (StringUtils.isBlank(faultAlarmRequest.getStation())){
+            return Result.fail("请求参数不完整");
+        }
+        LocalDateTime statisticTime = StringUtils.isNotBlank(faultAlarmRequest.getStatisticTime()) ? TimeUtil.parse(faultAlarmRequest.getStatisticTime()) : null;
+        // 告警图片
+        //MultipartFile file = faultAlarmRequest.getAlarmImage();
+        //String alarmImage = file != null ? FileUtils.fileToBase64(file) : null;
+        faultAlarmService.saveOrUpdate(new FaultAlarm(){{
+            setId(faultAlarmRequest.getId());
+            setStation(faultAlarmRequest.getStation());
+            setLedger(faultAlarmRequest.getLedger());
+            setPointName(faultAlarmRequest.getPointName());
+            setPatrol(faultAlarmRequest.getPatrol());
+            setStatisticTime(statisticTime);
+            setAlarmContent(faultAlarmRequest.getAlarmContent());
+            setAlarmImage(null);
+        }});
+        return Result.success("操作成功");
+    }
 
-
+    @Operation(summary = "故障告警监测删除接口",tags = "开关站/故障告警档案")
+    @DeleteMapping("/deleteFaultAlarm/{id}")
+    public Result<?> deleteFaultAlarm(@PathVariable("id") String id) {
+        faultAlarmService.removeById(id);
+        return Result.success("删除成功");
+    }
 
 
 

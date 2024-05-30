@@ -9,6 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @Author wangshuo
+ * @Description excel监听器
+ * @Date 2024/5/30 15:43
+ **/
+
 public class DynamicExcelDataListener<T> extends AnalysisEventListener<Map<Integer, String>> {
     @Getter
     private final List<T> dataList = new ArrayList<>();

@@ -21,6 +21,9 @@ public class CommonConstant {
     // 用户帐号
     public static final String X_USER_ACCOUNT = "X-User-Account";
 
+    // 用户帐号
+    public static final String X_Token = "X-Token";
+
     // 三维代码
     public static final Integer THREE_DIMENSIONAL_TYPE_CODE = 1;
     // 系统管理代码
@@ -36,6 +39,17 @@ public class CommonConstant {
     public static final Integer HIGH_VOLTAGE = 1;
     // 低压
     public static final Integer LOW_VOLTAGE = 2;
+
+
+    // 重要用户
+    public static final String USER_IMPORTANT = "级重要用户";
+    // 非重要用户
+    public static final String USER_NOT_IMPORTANT = "非重要用户";
+
+    // 高压用户
+    public static final String USER_HIGH_VOLTAGE = "高压";
+    // 低压用户
+    public static final String USER_LOW_VOLTAGE = "低压";
 
 
 }

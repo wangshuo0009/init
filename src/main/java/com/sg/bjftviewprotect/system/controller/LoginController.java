@@ -5,14 +5,16 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sg.bjftviewprotect.system.common.CookieManager;
 import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.common.TokenManager;
-import com.sg.bjftviewprotect.system.constant.CommonConstant;
 import com.sg.bjftviewprotect.system.entity.User;
 import com.sg.bjftviewprotect.system.request.UserLoginRequest;
 import com.sg.bjftviewprotect.system.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,11 +50,12 @@ public class LoginController {
         }
         String token = UUID.randomUUID().toString().replaceAll("-", "");
 
-        CookieManager.setCookie(request, response, account, one.getId());
-        TokenManager.setUserToken(request, account, token);
+        CookieManager.setCookie(request, response, account, one.getId(), token);
+        TokenManager.setAccountToken(request, account, token);
+        // 穿透跨域有问题，前端设置
         Map<String,String> map = new HashMap<>();
-        map.put(CommonConstant.X_USER_ID, one.getId());
-        map.put(CommonConstant.X_USER_ACCOUNT, one.getAccount());
+        //map.put(CommonConstant.X_USER_ID, one.getId());
+        //map.put(CommonConstant.X_USER_ACCOUNT, one.getAccount());
 
         return Result.success(200, "登陆成功", map, token);
     }

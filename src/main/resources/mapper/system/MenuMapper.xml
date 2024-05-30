@@ -85,7 +85,7 @@
             </if>
         </where>
 
-
+        order by menu.sort_no
 
     </select>
     <select id="selectAllByType" resultMap="menuWithMenuModules">
@@ -97,6 +97,7 @@
         <where>
             <if test="type != null and type == 1">
                 menu.type = #{type}
+                and menu.is_enable = 1
             </if>
         </where>
         order by menu.type,menu.sort_no,modules.sort_no

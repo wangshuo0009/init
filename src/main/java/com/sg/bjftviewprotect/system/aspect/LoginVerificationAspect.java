@@ -27,6 +27,7 @@ public class LoginVerificationAspect {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         assert attributes != null;
         HttpServletRequest request = attributes.getRequest();
+        // 目前就验证时间
         if (!TokenManager.isTokenValid(request)){
             log.error("登陆已过期，请重新登陆");
             throw new NotLoggedInException("登陆已过期，请重新登陆");
