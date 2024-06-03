@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sg.bjftviewprotect.system.common.CookieManager;
 import com.sg.bjftviewprotect.system.common.Result;
 import com.sg.bjftviewprotect.system.common.TokenManager;
+import com.sg.bjftviewprotect.system.constant.CommonConstant;
 import com.sg.bjftviewprotect.system.entity.User;
 import com.sg.bjftviewprotect.system.request.UserLoginRequest;
 import com.sg.bjftviewprotect.system.service.UserService;
@@ -54,8 +55,8 @@ public class LoginController {
         TokenManager.setAccountToken(request, account, token);
         // 穿透跨域有问题，前端设置
         Map<String,String> map = new HashMap<>();
-        //map.put(CommonConstant.X_USER_ID, one.getId());
-        //map.put(CommonConstant.X_USER_ACCOUNT, one.getAccount());
+        map.put(CommonConstant.X_USER_ID, one.getId());
+        map.put(CommonConstant.X_USER_ACCOUNT, one.getAccount());
 
         return Result.success(200, "登陆成功", map, token);
     }
