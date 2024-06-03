@@ -45,7 +45,6 @@ public class EasyExcelUtil {
      * @param sheetColumnMap 每个 Sheet 名称及其对应的列名数组
      * @param startRowIndex  开始行索引
      * @return 包含每个 Sheet 数据的 Map，其中 key 是 Sheet 名称，value 是 Sheet 数据
-     * @throws IOException
      */
     public static <T> Map<String, List<T>> importExcel(File file, Map<String, String[]> sheetColumnMap, Class<T> clazz, int startRowIndex) throws IOException {
         try (InputStream inputStream = Files.newInputStream(file.toPath())) {
@@ -60,7 +59,6 @@ public class EasyExcelUtil {
      * @param sheetColumnMap 每个 Sheet 名称及其对应的列名数组
      * @param startRowIndex  开始行索引
      * @return 包含每个 Sheet 数据的 Map，其中 key 是 Sheet 名称，value 是 Sheet 数据
-     * @throws IOException
      */
     public static <T> Map<String, List<T>> importExcel(MultipartFile multipartFile, Map<String, String[]> sheetColumnMap, Class<T> clazz, int startRowIndex) throws IOException {
         try (InputStream inputStream = multipartFile.getInputStream()) {
@@ -75,7 +73,6 @@ public class EasyExcelUtil {
      * @param columns       列名数组
      * @param startRowIndex 开始行索引
      * @return 读取的第一个 sheet 的数据
-     * @throws IOException
      */
     public static <T> List<T> importFirstSheet(File file, String[] columns, Class<T> clazz, int startRowIndex) throws IOException {
         try (InputStream inputStream = Files.newInputStream(file.toPath())) {
@@ -91,14 +88,52 @@ public class EasyExcelUtil {
      *
      * @param multipartFile 文件输入流
      * @param columns       列名数组
+     * @param clazz         映射的目标对象的类
      * @param startRowIndex 开始行索引
      * @return 读取的第一个 sheet 的数据
-     * @throws IOException
      */
     public static <T> List<T> importFirstSheet(MultipartFile multipartFile, String[] columns, Class<T> clazz, int startRowIndex) throws IOException {
         try (InputStream inputStream = multipartFile.getInputStream()) {
             DynamicExcelDataListener<T> listener = new DynamicExcelDataListener<>(columns, clazz);
             ExcelReaderSheetBuilder sheetBuilder = EasyExcel.read(inputStream, listener).sheet().headRowNumber(startRowIndex);
+            sheetBuilder.doRead();
+            return listener.getDataList();
+        }
+    }
+
+    /**
+     * 读取文件输入流的第一个 sheet
+     *
+     * @param multipartFile 文件输入流
+     * @param columns       列名数组
+     * @param clazz         映射的目标对象的类
+     * @param startRowIndex 开始行索引
+     * @param sheetNo       读取的 sheet 的编号（从 0 开始）
+     * @return 读取的第一个 sheetNo 的数据
+     */
+    public static <T> List<T> importFromSheet(MultipartFile multipartFile, String[] columns, Class<T> clazz, int startRowIndex, int sheetNo) throws IOException {
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            DynamicExcelDataListener<T> listener = new DynamicExcelDataListener<>(columns, clazz);
+            ExcelReaderSheetBuilder sheetBuilder = EasyExcel.read(inputStream, listener).sheet(sheetNo).headRowNumber(startRowIndex);
+            sheetBuilder.doRead();
+            return listener.getDataList();
+        }
+    }
+
+    /**
+     * 读取文件输入流的第一个 sheet
+     *
+     * @param multipartFile 文件输入流
+     * @param columns       列名数组
+     * @param clazz         映射的目标对象的类
+     * @param startRowIndex 开始行索引
+     * @param sheetName     读取的 sheet 的名称
+     * @return 读取的第一个 sheetName 的数据
+     */
+    public static <T> List<T> importFromSheet(MultipartFile multipartFile, String[] columns, Class<T> clazz, int startRowIndex, String sheetName) throws IOException {
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            DynamicExcelDataListener<T> listener = new DynamicExcelDataListener<>(columns, clazz);
+            ExcelReaderSheetBuilder sheetBuilder = EasyExcel.read(inputStream, listener).sheet(sheetName).headRowNumber(startRowIndex);
             sheetBuilder.doRead();
             return listener.getDataList();
         }
