@@ -69,13 +69,13 @@
         <where>
             menu.is_delete = 0
             <if test="menuRequest.id != null and menuRequest.id != '' and menuRequest.id.length > 0">
-                and role.id = #{menuRequest.id}
+                and menu.id = #{menuRequest.id}
             </if>
             <if test="menuRequest.name != null and menuRequest.name != '' and menuRequest.name.length > 0">
-                and role.name like concat('%',#{menuRequest.name},'%')
+                and menu.name like concat('%',#{menuRequest.name},'%')
             </if>
             <if test="menuRequest.code != null and menuRequest.code != '' and menuRequest.code.length > 0">
-                and role.code like concat('%',#{menuRequest.code},'%')
+                and menu.code like concat('%',#{menuRequest.code},'%')
             </if>
             <if test="roleChildIds != null and !roleChildIds.isEmpty()">
                 and rm.role_id in
