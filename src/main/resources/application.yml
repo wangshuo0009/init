@@ -13,7 +13,7 @@ server:
 #    context-path: 接口路径前缀
 spring:
   application:
-    name: bjftView-protect
+    name: 项目名称
   profiles:
     include:
       - dev
@@ -21,7 +21,7 @@ spring:
 
 mybatis-plus:
   mapper-locations: classpath:mapper/**/**.xml
-  typeAliasesPackage: com.sg.bjftviewprotect.**.entity
+  typeAliasesPackage: com.sg.init.entity
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   #    lazy-loading-enabled: true
@@ -66,6 +66,6 @@ knife4j:
   cors: false
   production: false
   basic:
-    enable: false
+    enable: false #接口文档页面密码是否开启
     username: test
     password: 12313
